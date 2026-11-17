@@ -24,6 +24,8 @@ a{color:inherit;text-decoration:none}.container{max-width:760px;margin:auto;padd
 <button class="primary" id="loginBtn" type="submit">دخول إلى حسابي</button>
 </form>
 <div class="msg" id="loginMsg" role="status" aria-live="polite"></div>
+<button type="button" id="diagnoseBtn" class="secondary" style="width:100%">فحص الاتصال بـ Supabase</button>
+<div class="hint" id="diagResult" role="status" aria-live="polite"></div>
 <p class="hint">الدخول متاح للعضويات التي تم تفعيل حسابها مسبقاً. إذا ما عندك كلمة سر، تواصل مع إدارة المحطة لتفعيل عضويتك أول مرة.</p>
 <hr class="line">
 <p class="hint">لن نطلب منك مشاركة كلمة السر أو رمز التفعيل عبر المحادثات. هذه الصفحة لا تُظهر نقاط أي زبون من دون تسجيل دخول.</p>
@@ -62,7 +64,34 @@ const {data}=await sb.auth.getSession();if(data?.session)await loadAccount();els
 $('loginForm').addEventListener('submit',async ev=>{ev.preventDefault();if(busy||!sb)return;const phone=normalize($('phone').value);if(!phone){note('loginMsg','أدخل رقم موبايل لبناني صحيح.');return;}const password=$('password').value;if(!password){note('loginMsg','أدخل كلمة السر.');return;}busy=true;$('loginBtn').disabled=true;note('loginMsg','عم نفتح حسابك…',true);try{const {error}=await sb.auth.signInWithPassword({email:internalEmail(phone),password});$('password').value='';if(error)throw error;await loadAccount();}catch(e){note('loginMsg','رقم الهاتف أو كلمة السر غير صحيحة، أو العضوية لم تُفعّل بعد.');}finally{busy=false;$('loginBtn').disabled=false;}});
 $('logoutBtn').addEventListener('click',async()=>{if(sb)await sb.auth.signOut();view('login');$('password').value='';note('loginMsg','تم تسجيل الخروج.',true);});
 $('refreshBtn').addEventListener('click',async()=>{try{await loadAccount();note('accountMsg','تم تحديث الرصيد.',true);}catch{note('accountMsg','تعذّر تحديث الرصيد.');}});
-begin().catch(()=>{view('login');note('loginMsg','تعذّر الاتصال بالبرنامج حالياً.');});
+async function diagnoseConnection(){
+  const b=$('diagnoseBtn'), out=$('diagResult');
+  b.disabled=true;out.textContent='عم نفحص اتصال الموقع…';
+  const details=[];
+  try{
+    if(!window.supabase || typeof window.supabase.createClient!=='function'){
+      details.push('مكتبة Supabase ما تحمّلت');out.textContent=details.join(' | ');return;
+    }
+    details.push('مكتبة تسجيل الدخول جاهزة');
+    try{
+      const c=sb||window.supabase.createClient(URL,PUBLIC_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
+      details.push('تهيئة الاتصال ناجحة');
+      const session=await c.auth.getSession();
+      details.push(session.error?'الجلسة: خطأ '+(session.error.name||'AuthError'):'فحص الجلسة ناجح');
+    }catch(e){details.push('فشل التهيئة/الجلسة: '+(e?.name||'Error'));}
+    try{
+      const ctl=new AbortController();
+      const timeout=setTimeout(()=>ctl.abort(),8000);
+      try{
+        const r=await fetch(URL+'/auth/v1/health',{method:'GET',headers:{'apikey':PUBLIC_KEY},cache:'no-store',signal:ctl.signal});
+        details.push('استجابة خدمة الدخول: HTTP '+r.status);
+      }finally{clearTimeout(timeout);}
+    }catch(e){details.push('فحص الشبكة: '+(e?.name||'NetworkError'));}
+  }catch(e){details.push('خطأ بالفحص: '+(e?.name||'Error'));}
+  finally{out.textContent=details.join(' | ');b.disabled=false;}
+}
+$('diagnoseBtn').addEventListener('click',diagnoseConnection);
+begin().catch(e=>{view('login');note('loginMsg','تعذّر الاتصال بالبرنامج حالياً. اضغط فحص الاتصال لمعرفة المرحلة المتعطّلة.');});
 </script>
 </body>
 </html>
