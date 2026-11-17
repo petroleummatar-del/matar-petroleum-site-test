@@ -25,7 +25,14 @@ a{color:inherit;text-decoration:none}.container{max-width:760px;margin:auto;padd
 </form>
 <div class="msg" id="loginMsg" role="status" aria-live="polite"></div>
 <button type="button" id="diagnoseBtn" class="secondary" style="width:100%">فحص الاتصال بـ Supabase</button>
-<div class="hint" id="diagResult" role="status" aria-live="polite">نسخة 4.1 — اضغط فحص الاتصال لعرض النتيجة هون.</div>
+<div class="hint" id="diagResult" role="status" aria-live="polite">نسخة 4.2 — اضغط فحص الاتصال لعرض النتيجة هون.</div>
+<div style="margin:18px 0 10px; padding:15px; border:1px solid #485b88; border-radius:15px">
+  <label for="publishableTest">تجربة مفتاح Supabase العام (Publishable key فقط)</label>
+  <input id="publishableTest" type="password" dir="ltr" autocomplete="off" spellcheck="false" placeholder="sb_publishable_…" aria-describedby="publishableHint" />
+  <p id="publishableHint" class="hint">انسخ المفتاح من Project Settings → API Keys → Publishable key. ما تحط Secret key أبداً. الفحص ما بيخزّن المفتاح.</p>
+  <button type="button" id="testKeyBtn" class="secondary" style="width:100%">جرّب المفتاح العام</button>
+  <div class="hint" id="keyTestResult" role="status" aria-live="polite"></div>
+</div>
 <p class="hint">الدخول متاح للعضويات التي تم تفعيل حسابها مسبقاً. إذا ما عندك كلمة سر، تواصل مع إدارة المحطة لتفعيل عضويتك أول مرة.</p>
 <hr class="line">
 <p class="hint">لن نطلب منك مشاركة كلمة السر أو رمز التفعيل عبر المحادثات. هذه الصفحة لا تُظهر نقاط أي زبون من دون تسجيل دخول.</p>
@@ -47,6 +54,37 @@ a{color:inherit;text-decoration:none}.container{max-width:760px;margin:auto;padd
   const button=document.getElementById('diagnoseBtn');
   const output=document.getElementById('diagResult');
   if(!button||!output)return;
+
+  const testKeyBtn=document.getElementById('testKeyBtn');
+  const testKeyInput=document.getElementById('publishableTest');
+  const keyTestResult=document.getElementById('keyTestResult');
+  testKeyBtn.addEventListener('click',async function(){
+    const candidate=testKeyInput.value.trim();
+    if(!/^sb_publishable_[A-Za-z0-9_-]{16,}$/.test(candidate)){
+      keyTestResult.textContent='المطلوب مفتاح عام يبدأ بـ sb_publishable_ فقط. لا تستعمل Secret key.';
+      testKeyInput.value='';
+      return;
+    }
+    testKeyBtn.disabled=true;
+    keyTestResult.textContent='عم نجرّب المفتاح من دون حفظه…';
+    const controller=new AbortController();
+    const timeout=setTimeout(()=>controller.abort(),9000);
+    try{
+      const r=await fetch('https://zvxotwnwdkywttdjojpx.supabase.co/auth/v1/health',{
+        method:'GET',headers:{'apikey':candidate},cache:'no-store',signal:controller.signal
+      });
+      keyTestResult.textContent=r.ok
+        ?'✓ المفتاح الجديد اشتغل (HTTP '+r.status+'). المشكلة غالباً بالمفتاح القديم الموجود بالكود.'
+        :'المفتاح المجرّب أعطى HTTP '+r.status+'. لازم نفحص المشروع والمفتاح.';
+    }catch(e){
+      keyTestResult.textContent='تعذّر الاختبار: '+(e && e.name==='AbortError'?'انتهت مهلة الاتصال':'مشكلة شبكة أو متصفح');
+    }finally{
+      clearTimeout(timeout);
+      testKeyInput.value='';
+      testKeyBtn.disabled=false;
+    }
+  });
+
   button.addEventListener('click',async function(){
     button.disabled=true;
     output.textContent='✓ زر الفحص شغّال. عم نراجع تحميل المكتبة والاتصال…';
