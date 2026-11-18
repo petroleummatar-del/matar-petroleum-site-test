@@ -1,0 +1,116 @@
+{
+  "version": 1,
+  "brand": {
+    "name": "MATAR PETROLEUM",
+    "arabic": "محطات مطر",
+    "city": "زحلة • لبنان",
+    "tagline": "ثقتكم وقود نجاحنا",
+    "logoUrl": ""
+  },
+  "announcement": {
+    "visible": true,
+    "text": "أهلاً فيك بصفحة MATAR الرقمية — كل روابطنا وخدماتنا بمحل واحد"
+  },
+  "links": {
+    "website": "https://petroleum-matar.com/",
+    "club": "../club/",
+    "phone": "+96170482824",
+    "whatsapp": "",
+    "googleMapsMain": "",
+    "googleMapsSmall": ""
+  },
+  "social": [
+    {
+      "name": "Instagram",
+      "url": "",
+      "icon": "IG",
+      "tone": "instagram"
+    },
+    {
+      "name": "Facebook",
+      "url": "",
+      "icon": "f",
+      "tone": "facebook"
+    },
+    {
+      "name": "TikTok",
+      "url": "",
+      "icon": "♪",
+      "tone": "tiktok"
+    },
+    {
+      "name": "WhatsApp",
+      "url": "",
+      "icon": "WA",
+      "tone": "whatsapp"
+    }
+  ],
+  "promos": [
+    {
+      "eyebrow": "MATAR CLUB",
+      "title": "كل نقطة بتعمل فرق",
+      "description": "نادي مطر بيخلّيك تتابع رصيد نقاطك والمكافآت من تلفونك.",
+      "badge": "برنامج الولاء",
+      "cta": "اكتشف MATAR CLUB",
+      "href": "../club/",
+      "theme": "club",
+      "imageUrl": ""
+    },
+    {
+      "eyebrow": "عروضنا",
+      "title": "العرض الجديد بيكون هون",
+      "description": "هيدي مساحة جاهزة لأي عرض بنزين، مازوت، غسيل سيارات أو إعلان جديد.",
+      "badge": "مساحة للعروض",
+      "cta": "شوف خدماتنا",
+      "href": "#services",
+      "theme": "offer",
+      "imageUrl": ""
+    },
+    {
+      "eyebrow": "خدمات MATAR",
+      "title": "خدمتك من القلب",
+      "description": "تعبئة محروقات، غسيل، غيار زيت وخدمات إضافية بمحطات مطر.",
+      "badge": "محطات مطر",
+      "cta": "شوف الخدمات",
+      "href": "#services",
+      "theme": "service",
+      "imageUrl": ""
+    }
+  ],
+  "services": [
+    {
+      "icon": "⛽",
+      "title": "بنزين 95 و98",
+      "caption": "تعبئة دقيقة"
+    },
+    {
+      "icon": "🛢️",
+      "title": "مازوت",
+      "caption": "تعبئة وتوزيع"
+    },
+    {
+      "icon": "🚘",
+      "title": "غسيل سيارات",
+      "caption": "غسيل سيارات وشاحنات"
+    },
+    {
+      "icon": "🔧",
+      "title": "غيار زيت",
+      "caption": "خدمة وعناية"
+    },
+    {
+      "icon": "⚡",
+      "title": "شحن كهربائي",
+      "caption": "EV Charger"
+    },
+    {
+      "icon": "🎁",
+      "title": "MATAR CLUB",
+      "caption": "نقاط ومكافآت"
+    }
+  ],
+  "note": {
+    "visible": true,
+    "text": "محتوى تجريبي للمعاينة — العروض الحقيقية وروابط السوشال بتتحدّث عند اعتمادها."
+  }
+}
