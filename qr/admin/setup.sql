@@ -1,15 +1,8 @@
 -- MATAR QR HUB admin storage and owner-only editing.
--- Run this once in the Supabase SQL Editor for project zvxotwnwdkywttdjojpx.
--- BEFORE RUNNING: Replace the text PUT_OWNER_EMAIL_HERE at the bottom
--- with the email address used by the owner to sign into Supabase.
--- Do not publish service_role keys or Supabase passwords.
+-- Run once in the Supabase SQL Editor of project zvxotwnwdkywttdjojpx.
+-- Uses existing MATAR CLUB staff table. Only active owners can edit the QR hub.
+-- No new user login, owner email, password, or API secret is needed here.
 begin;
-create table if not exists public.matar_qr_admins (
-  user_id uuid primary key references auth.users(id) on delete cascade,
-  added_at timestamptz not null default now()
-);
-alter table public.matar_qr_admins enable row level security;
-revoke all on table public.matar_qr_admins from anon, authenticated;
 
 create or replace function public.matar_qr_is_admin()
 returns boolean
@@ -20,8 +13,10 @@ set search_path = ''
 as $fn$
   select exists (
     select 1
-      from public.matar_qr_admins a
-     where a.user_id = (select auth.uid())
+      from public.matar_staff s
+     where s.auth_user_id = (select auth.uid())
+       and s.role = 'owner'
+       and s.active is true
   );
 $fn$;
 revoke all on function public.matar_qr_is_admin() from public;
@@ -75,22 +70,5 @@ for insert to authenticated
 with check (bucket_id='matar-qr-media' and public.matar_qr_is_admin());
 
 -- No overwrite/delete policy by design: new image uploads use unique paths.
--- Only an existing authenticated owner gets access.
-do $owner$
-declare
-  email_input text := 'PUT_OWNER_EMAIL_HERE';
-  owner_uuid uuid;
-begin
-  if email_input = 'PUT_OWNER_EMAIL_HERE' then
-    raise exception 'Replace PUT_OWNER_EMAIL_HERE with your actual owner login email and run again.';
-  end if;
-  select id into owner_uuid
-    from auth.users where lower(email)=lower(email_input) limit 1;
-  if owner_uuid is null then
-    raise exception 'No Supabase Auth user found with email %. Check Auth > Users.',email_input;
-  end if;
-  insert into public.matar_qr_admins(user_id) values (owner_uuid)
-    on conflict do nothing;
-end
-$owner$;
+-- Before opening the admin page, verify the owner already exists in public.matar_staff.
 commit;
