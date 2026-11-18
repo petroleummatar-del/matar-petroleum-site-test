@@ -6,13 +6,13 @@
 <form id="activateForm">
 <label for="phone">رقم الموبايل المسجّل</label><input id="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="03 123 456" required>
 <label for="code">رمز التفعيل من المحطة (12 خانة)</label><input id="code" type="text" minlength="12" maxlength="12" autocapitalize="characters" autocomplete="off" placeholder="XXXXXXXXXXXX" required>
-<label for="pass1">كلمة سر جديدة — 10 أحرف أو أكثر</label><input id="pass1" type="password" autocomplete="new-password" minlength="10" required>
-<label for="pass2">تأكيد كلمة السر</label><input id="pass2" type="password" autocomplete="new-password" minlength="10" required>
+<label for="pass1">رمز سري جديد من 6 أرقام</label><input id="pass1" type="password" inputmode="numeric" autocomplete="new-password" minlength="6" maxlength="6" pattern="[0-9]{6}" required>
+<label for="pass2">إعادة الرمز السري</label><input id="pass2" type="password" inputmode="numeric" autocomplete="new-password" minlength="6" maxlength="6" pattern="[0-9]{6}" required>
 <button id="send" type="submit" class="primary">تفعيل العضوية</button>
 </form>
 <div class="notice" id="status" role="status" aria-live="polite"></div>
 <div class="hidden result" id="success"><p class="ok">✓ تم إنشاء حسابك. فيك تفوت برقمك وكلمة السر.</p><a class="nav" href="../">انتقل إلى تسجيل الدخول</a></div>
-<p class="hint">الرمز صالح لمدة 20 دقيقة ولمرة واحدة فقط. ما تشارك كلمة السر مع موظف أو عبر واتساب.</p>
+<p class="hint">رمز تفعيل المحطة صالح 20 دقيقة. اختار 6 أرقام خاصة فيك وغير متوقّعة (مش 123456 أو تاريخ ميلادك)، وما تشارك رمزك السري مع حدا. التفعيل الفعلي بعده بمرحلة الاختبار الأمني.</p>
 </section><footer>MATAR Petroleum — لا تُرسل بيانات الدخول عبر المحادثات.</footer></main>
 <script>
 (function(){
@@ -26,8 +26,8 @@ $('activateForm').addEventListener('submit',async e=>{
 e.preventDefault();const phone=normalize($('phone').value);const code=$('code').value.trim().toUpperCase();const password=$('pass1').value;
 if(!phone){status('أدخل رقم لبناني صحيح.');return}
 if(!/^[A-F0-9]{12}$/.test(code)){status('رمز التفعيل لازم يكون 12 خانة من الأحرف A-F والأرقام.');return}
-if(password.length<10){status('كلمة السر لازم تكون 10 أحرف أو أكثر.');return}
-if(password!==$('pass2').value){status('تأكيد كلمة السر غير مطابق.');return}
+if(!/^[0-9]{6}$/.test(password)){status('الرمز السري لازم يكون 6 أرقام بالضبط.');return}
+if(password!==$('pass2').value){status('الرمزين مش متطابقين.');return}
 $('send').disabled=true;status('عم نراجع رمز التفعيل…',true);
 try{
 const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),12000);
