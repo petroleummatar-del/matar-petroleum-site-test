@@ -77,10 +77,10 @@ button{border:1px solid #5b7097;border-radius:12px;padding:12px 15px;min-height:
 <script>
 (function(){
 'use strict';
-const URL='https://zvxotwnwdkywttdjojpx.supabase.co';
+const SUPABASE_PROJECT_URL='https://zvxotwnwdkywttdjojpx.supabase.co';
 const KEY='sb_publishable__-ImiWyhptaElvhhvon7MQ_vffPtuFV';
 const $=id=>document.getElementById(id);
-const sb=window.supabase?.createClient(URL,KEY,{auth:{storageKey:'matar-qr-owner-v1',persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
+const sb=window.supabase?.createClient(SUPABASE_PROJECT_URL,KEY,{auth:{storageKey:'matar-qr-owner-v1',persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
 let user=null, data=null, loaded=false, busy=false;
 const msg=(s,ok=false)=>{$('status').textContent=s;$('status').className='notice'+(ok?' ok':'')};
 const el=(tag,cls,t)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(t!=null)n.textContent=String(t);return n};
