@@ -1,0 +1,46 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#091128"><title>تفعيل حساب الزبون | MATAR CLUB</title><style>*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 80% 0%,#2d2258,transparent 50%),#091128;color:#f7f9ff;font:16px system-ui,"Segoe UI",Tahoma,Arial,sans-serif}main{width:min(100% - 32px,580px);margin:24px auto 65px}.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:38px}.brand{font-size:24px;letter-spacing:1px;font-weight:800}.brand span{color:#c09cff}.nav{color:#c7d5f9;font-size:13px;text-decoration:none;background:#ffffff14;padding:10px 14px;border:1px solid #4b5a7a;border-radius:12px}.tag{border:1px solid #8e6fd6;padding:7px 12px;border-radius:22px;color:#d9c4ff;font-size:13px;display:inline-block}.card{border:1px solid #4b5e86;background:linear-gradient(140deg,#132241,#0d1830);padding:28px;border-radius:24px;box-shadow:0 24px 75px #0005}h1{font-size:30px;margin:18px 0 8px}p{line-height:1.8;color:#c4cfeb}.hint{color:#a9b8dd;font-size:13px}.ok{color:#a6f5d2}.bad{color:#ffc8ce}label{display:block;margin:19px 0 8px;font-weight:700;font-size:14px}input{width:100%;padding:15px;background:#07142d;border:1px solid #7080af;border-radius:11px;color:white;font:inherit;direction:ltr;text-align:left}button{padding:14px;border:0;border-radius:11px;font:inherit;color:#fff;font-weight:750;cursor:pointer}.primary{background:linear-gradient(95deg,#9051d5,#5b7dea);width:100%;margin-top:22px}.minor{border:1px solid #62749c;background:#24355d}.primary:disabled,.minor:disabled{opacity:.5;cursor:wait}.notice{margin:14px 0;min-height:20px;font-size:14px;line-height:1.8}.hidden{display:none!important}.result{border:1px solid #4c5f87;border-radius:14px;padding:20px;background:#141e38;margin-top:18px}.secret{font-size:26px;font-weight:800;letter-spacing:4px;direction:ltr;text-align:center;padding:14px;border:1px dashed #8a79ca;border-radius:12px;margin:16px 0;overflow-wrap:anywhere}footer{font-size:12px;color:#8395bd;text-align:center;margin-top:22px}</style></head>
+<body><main><div class="top"><div class="brand">MATAR <span>CLUB</span></div><a class="nav" href="../">تسجيل الدخول</a></div>
+<section class="card">
+<div class="tag">تفعيل أول مرة</div><h1>فعّل حسابك</h1>
+<p>إذا أنت مسجّل في نادي مطر، اطلب رمز التفعيل من مسؤول المحطة بعد التأكد من هويتك، وبعدها اختار كلمة سرّ خاصة فيك.</p>
+<form id="activateForm">
+<label for="phone">رقم الموبايل المسجّل</label><input id="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="03 123 456" required>
+<label for="code">رمز التفعيل من المحطة (12 خانة)</label><input id="code" type="text" minlength="12" maxlength="12" autocapitalize="characters" autocomplete="off" placeholder="XXXXXXXXXXXX" required>
+<label for="pass1">كلمة سر جديدة — 10 أحرف أو أكثر</label><input id="pass1" type="password" autocomplete="new-password" minlength="10" required>
+<label for="pass2">تأكيد كلمة السر</label><input id="pass2" type="password" autocomplete="new-password" minlength="10" required>
+<button id="send" type="submit" class="primary">تفعيل العضوية</button>
+</form>
+<div class="notice" id="status" role="status" aria-live="polite"></div>
+<div class="hidden result" id="success"><p class="ok">✓ تم إنشاء حسابك. فيك تفوت برقمك وكلمة السر.</p><a class="nav" href="../">انتقل إلى تسجيل الدخول</a></div>
+<p class="hint">الرمز صالح لمدة 20 دقيقة ولمرة واحدة فقط. ما تشارك كلمة السر مع موظف أو عبر واتساب.</p>
+</section><footer>MATAR Petroleum — لا تُرسل بيانات الدخول عبر المحادثات.</footer></main>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const PUBLIC='sb_publishable__-ImiWyhptaElvhhvon7MQ_vffPtuFV';
+const ENDPOINT='https://zvxotwnwdkywttdjojpx.supabase.co/functions/v1/matar-customer-register';
+function normalize(s){let p=String(s).replace(/[^\d+]/g,'');if(p.startsWith('00'))p='+'+p.slice(2);if(p.startsWith('961'))p='+'+p;if(p.startsWith('0'))p='+961'+p.slice(1);else if(!p.startsWith('+'))p='+961'+p;return /^\+961\d{7,8}$/.test(p)?p:null}
+function status(t,ok=false){$('status').textContent=t;$('status').className='notice '+(ok?'ok':'bad')}
+$('activateForm').addEventListener('submit',async e=>{
+e.preventDefault();const phone=normalize($('phone').value);const code=$('code').value.trim().toUpperCase();const password=$('pass1').value;
+if(!phone){status('أدخل رقم لبناني صحيح.');return}
+if(!/^[A-F0-9]{12}$/.test(code)){status('رمز التفعيل لازم يكون 12 خانة من الأحرف A-F والأرقام.');return}
+if(password.length<10){status('كلمة السر لازم تكون 10 أحرف أو أكثر.');return}
+if(password!==$('pass2').value){status('تأكيد كلمة السر غير مطابق.');return}
+$('send').disabled=true;status('عم نراجع رمز التفعيل…',true);
+try{
+const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),12000);
+let r, result;
+try{r=await fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json','apikey':PUBLIC},body:JSON.stringify({phone,activation_code:code,password}),cache:'no-store',signal:controller.signal});try{result=await r.json()}catch{result={}}}finally{clearTimeout(timeout)}
+if(r.ok&&result?.ok===true){$('activateForm').classList.add('hidden');$('success').classList.remove('hidden');status('نجح تفعيل العضوية.',true)}
+else if(r.status===401){status('التفعيل بعده غير متاح على Supabase. مسؤول المحطة لازم يكمّل إعداد الوظيفة أولاً.')}
+else if(r.status===403){status('رابط الموقع الجديد بعده مش مضاف لإعدادات وظيفة التسجيل.')}
+else if(r.status===400){status('رمز التفعيل غير صحيح أو منتهي الصلاحية. راجع مسؤول المحطة.')}
+else if(r.status===409){status('تعذّر إكمال تفعيل الحساب. راجع إدارة المحطة.')}
+else{status('تعذّر التفعيل حالياً. حاول لاحقاً أو راجع مسؤول المحطة.')}
+}catch{status('تعذّر الاتصال بخدمة التفعيل. تأكد من الإنترنت.')}
+finally{$('pass1').value='';$('pass2').value='';$('send').disabled=false}
+});
+})();
+</script></body></html>
