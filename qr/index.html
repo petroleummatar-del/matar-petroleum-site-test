@@ -41,7 +41,7 @@ a{color:inherit;text-decoration:none}button{font:inherit}button:focus-visible,a:
 .promo-card:before{content:"";position:absolute;width:290px;height:290px;border:1px solid #ffffff31;border-radius:50%;left:-100px;top:-100px;box-shadow:0 0 0 55px #ffffff0b;z-index:-1}.promo-card:after{content:"";position:absolute;width:190px;height:190px;background:#fffe;border-radius:50%;filter:blur(95px);opacity:.07;left:25%;top:15%;z-index:-1}
 .promo-card.offer{background:linear-gradient(135deg,#604473,#19374e)}.promo-card.service{background:linear-gradient(135deg,#155465,#19233f)}
 .promo-card[data-has-image="true"]:before{display:none}.promo-bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.26;z-index:-2}
-.promo-card .promo-eyebrow{font-weight:820;letter-spacing:1px;color:#adf0ff;font-size:12px}.promo-card h3{font-size:clamp(25px,3vw,35px);margin:12px 0;line-height:1.3}.promo-card p{font-size:14px;line-height:1.8;color:#d0d8f1;margin:0 0 18px;max-width:470px}.promo-card .btn{min-height:42px;padding:10px 16px;font-size:12px;background:#ffffff18}
+.promo-card .promo-eyebrow{font-weight:820;letter-spacing:1px;color:#adf0ff;font-size:12px}.promo-card h3{font-size:clamp(25px,3vw,35px);margin:12px 0;line-height:1.3}.promo-card p{font-size:14px;line-height:1.8;color:#d0d8f1;margin:0 0 18px;max-width:470px}.promo-card .btn{min-height:42px;padding:10px 16px;font-size:12px;background:#ffffff18}.promo-price{display:inline-flex;margin:0 0 14px;background:#eef7ff24;border:1px solid #c4e5ff65;border-radius:11px;padding:9px 13px;font-size:21px;font-weight:850;direction:auto}.promo-price[hidden]{display:none}
 .promo-badge{position:absolute;inset-inline-start:28px;top:24px;padding:7px 12px;border-radius:20px;background:#ffffff18;border:1px solid #ffffff2a;font-size:11px;color:#ebf9ff}
 .promo-controls{display:flex;gap:6px;margin-top:14px;align-items:center}.promo-dot{width:29px;height:7px;border:0;border-radius:7px;background:#566889;padding:0;cursor:pointer}.promo-dot[aria-pressed="true"]{width:45px;background:linear-gradient(90deg,#ad91ff,#7ad9fa)}
 .club-tile{border:1px solid #546e9e;border-radius:26px;padding:28px 27px;background:radial-gradient(circle at 10% 4%,#46358c77,transparent 50%),linear-gradient(140deg,#151d3e,#182d4b);display:flex;flex-direction:column;justify-content:space-between;gap:15px}
@@ -84,7 +84,7 @@ footer{border-top:1px solid #ffffff24;margin-top:60px;padding:28px 0 36px;displa
 <section id="offers" class="section">
 <div class="section-header"><div><div class="section-kicker">DISCOVER & EXPLORE</div><h2 class="section-title">جديدنا وعروضنا</h2><p class="section-sub">هون منحط العروض والإعلانات، ومنغيّرها وقت ما بدنا.</p></div><div class="promo-controls" id="promoDots" aria-label="اختيار الإعلان"></div></div>
 <div class="showcase">
-<article id="promo" class="promo-card" aria-live="polite"><div id="promoBg" class="promo-bg"></div><span class="promo-badge" id="promoBadge">MATAR CLUB</span><span class="promo-eyebrow" id="promoEyebrow">نادي مطر</span><h3 id="promoTitle">كل نقطة بتعمل فرق</h3><p id="promoDescription">تابع نقاطك ومكافآتك من تلفونك.</p><a class="btn" id="promoLink" href="../club/">اكتشف MATAR CLUB ←</a></article>
+<article id="promo" class="promo-card" aria-live="polite"><div id="promoBg" class="promo-bg"></div><span class="promo-badge" id="promoBadge">MATAR CLUB</span><span class="promo-eyebrow" id="promoEyebrow">نادي مطر</span><h3 id="promoTitle">كل نقطة بتعمل فرق</h3><p id="promoDescription">تابع نقاطك ومكافآتك من تلفونك.</p><div id="promoPrice" class="promo-price" hidden></div><a class="btn" id="promoLink" href="../club/">اكتشف MATAR CLUB ←</a></article>
 <aside class="club-tile"><span class="club-icon" aria-hidden="true">✦</span><div><h3>MATAR CLUB</h3><p>رصيد نقاطك، تعبئاتك ومكافآتك بحساب واحد، من تلفونك.</p></div><a class="btn" id="clubSecondary" href="../club/">فتح حساب النادي <span aria-hidden="true">←</span></a></aside>
 </div>
 </section>
@@ -124,7 +124,7 @@ const safeHref=s=>typeof s==='string'&&(/^(\.\.\/club\/|#(?:offers|services|cont
 const link=(a,url)=>{if(safeHref(url)){a.href=url;a.removeAttribute('aria-disabled');a.classList.remove('pending');if(isUrl(url)){a.target='_blank';a.rel='noopener noreferrer'}}else{a.removeAttribute('href');a.classList.add('pending');a.setAttribute('aria-disabled','true');}};
 const el=(tag,cls,content)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(content!=null)n.textContent=String(content);return n};
 let promos=[];let active=0;let timer;
-function showPromo(i){if(!promos.length)return;active=(i+promos.length)%promos.length;const p=promos[active];$('promoBadge').textContent=p.badge||'MATAR';$('promoEyebrow').textContent=p.eyebrow||'MATAR';$('promoTitle').textContent=p.title||'';$('promoDescription').textContent=p.description||'';$('promoLink').textContent=(p.cta||'اكتشف المزيد')+' ←';link($('promoLink'),p.href);$('promo').className='promo-card '+(['club','offer','service'].includes(p.theme)?p.theme:'club');const bg=$('promoBg');if(isUrl(p.imageUrl)&&/\.(png|jpe?g|webp|gif)(?:\?.*)?$/i.test(p.imageUrl)){bg.style.backgroundImage='linear-gradient(90deg,#101933c9,#10193344),url("'+p.imageUrl.replace(/["\\]/g,'')+'")';$('promo').setAttribute('data-has-image','true')}else{bg.style.backgroundImage='none';$('promo').removeAttribute('data-has-image')};[...$('promoDots').children].forEach((dot,j)=>dot.setAttribute('aria-pressed',String(j===active)))}
+function showPromo(i){if(!promos.length)return;active=(i+promos.length)%promos.length;const p=promos[active];$('promoBadge').textContent=p.badge||'MATAR';$('promoEyebrow').textContent=p.eyebrow||'MATAR';$('promoTitle').textContent=p.title||'';$('promoDescription').textContent=p.description||'';$('promoPrice').textContent=p.price||'';$('promoPrice').hidden=!p.price;$('promoLink').textContent=(p.cta||'اكتشف المزيد')+' ←';link($('promoLink'),p.href);$('promo').className='promo-card '+(['club','offer','service'].includes(p.theme)?p.theme:'club');const bg=$('promoBg');if(isUrl(p.imageUrl)&&/\.(png|jpe?g|webp|gif)(?:\?.*)?$/i.test(p.imageUrl)){bg.style.backgroundImage='linear-gradient(90deg,#101933c9,#10193344),url("'+p.imageUrl.replace(/["\\]/g,'')+'")';$('promo').setAttribute('data-has-image','true')}else{bg.style.backgroundImage='none';$('promo').removeAttribute('data-has-image')};[...$('promoDots').children].forEach((dot,j)=>dot.setAttribute('aria-pressed',String(j===active)))}
 function renderPromos(list){promos=(Array.isArray(list)?list:[]).filter(p=>p&&typeof p.title==='string').slice(0,8);if(!promos.length)return;$('promoDots').replaceChildren();promos.forEach((p,i)=>{const dot=el('button','promo-dot');dot.type='button';dot.setAttribute('aria-label','الإعلان '+(i+1));dot.addEventListener('click',()=>{showPromo(i);startTimer()});$('promoDots').append(dot)});showPromo(0);startTimer()}
 function startTimer(){clearInterval(timer);if(promos.length>1 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches)timer=setInterval(()=>showPromo(active+1),7200)}
 $('promo').addEventListener('mouseenter',()=>clearInterval(timer));$('promo').addEventListener('mouseleave',startTimer);$('promo').addEventListener('focusin',()=>clearInterval(timer));$('promo').addEventListener('focusout',startTimer);
@@ -138,7 +138,23 @@ if(c.promos)renderPromos(c.promos);if(c.services)renderServices(c.services);if(c
 if(c.note){$('editNote').hidden=!c.note.visible;$('editNote').textContent=c.note.text||''}}
 const fallback={promos:[{title:'كل نقطة بتعمل فرق',description:'تابع نقاطك ومكافآتك من تلفونك.',eyebrow:'MATAR CLUB',badge:'برنامج الولاء',cta:'MATAR CLUB',href:'../club/',theme:'club'}],social:[{name:'Instagram',icon:'IG'},{name:'Facebook',icon:'f'},{name:'TikTok',icon:'♪'},{name:'WhatsApp',icon:'WA'}],services:[{icon:'⛽',title:'بنزين 95 و98',caption:'تعبئة دقيقة'},{icon:'⚡',title:'شحن كهربائي',caption:'EV Charger'}]};
 render(fallback);
-fetch('./content.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('No config');return r.json()}).then(render).catch(()=>{});
+(async()=>{
+  // Static GitHub content works as a safe fallback until the owner installs Supabase migration.
+  try{
+    const baseline=await fetch('./content.json',{cache:'no-store'});
+    if(baseline.ok)render(await baseline.json());
+  }catch{}
+  // Published owner-approved edits take precedence over the static fallback.
+  try{
+    const response=await fetch('https://zvxotwnwdkywttdjojpx.supabase.co/rest/v1/matar_qr_content?select=content&id=eq.main',{
+      headers:{'apikey':'sb_publishable__-ImiWyhptaElvhhvon7MQ_vffPtuFV'},
+      cache:'no-store'
+    });
+    if(!response.ok)return;
+    const rows=await response.json();
+    if(Array.isArray(rows)&&rows[0]?.content&&typeof rows[0].content==='object')render(rows[0].content);
+  }catch{}
+})();
 })();
 </script>
 </body>
