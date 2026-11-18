@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0c162a">
+<title>MATAR CONTROL | إدارة صفحة QR</title>
+<style>
+:root{color-scheme:dark;--bg:#080f20;--surface:#111f39;--surface2:#172a4b;--stroke:#425479;--text:#f7f9ff;--muted:#adbddd;--primary:#956ce1;--green:#a8edce}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0,#31274e,transparent 430px),var(--bg);font-family:system-ui,"Segoe UI",Tahoma,Arial,sans-serif;color:var(--text);font-size:15px;min-height:100vh}main{max-width:880px;margin:0 auto;padding:18px 15px 70px}
+header{display:flex;align-items:center;justify-content:space-between;gap:15px;margin:0 0 28px}.logo{font-size:24px;letter-spacing:1px;font-weight:900;direction:ltr}.logo small{display:block;font-size:11px;font-weight:650;letter-spacing:2px;color:#b7b1eb}header a,.previewlink{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#c6dfff;background:#172a4b;border:1px solid #58688f;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:750}
+.hero{padding:0 3px;margin-bottom:20px}.kicker{font-size:12px;font-weight:800;color:#bcb0ff;letter-spacing:1.5px}.hero h1{font-size:clamp(27px,6vw,37px);margin:8px 0;line-height:1.4}.hero p{font-size:14px;color:var(--muted);line-height:1.9;margin:0}
+.panel{background:linear-gradient(155deg,#142541,#111b30);border:1px solid var(--stroke);border-radius:22px;padding:23px;margin-bottom:18px;box-shadow:0 12px 36px #0002}
+.panel h2{font-size:20px;margin:0 0 8px}.sub{font-size:13px;color:#a9bad6;margin:0 0 20px;line-height:1.8}
+label{display:block;font-size:13px;font-weight:750;margin:13px 0 6px}
+input,textarea{display:block;width:100%;min-height:44px;border:1px solid #64769b;border-radius:12px;padding:12px 13px;background:#0b1830;color:#fff;font:inherit;outline:none}
+textarea{resize:vertical;min-height:80px}input:focus,textarea:focus{border-color:#a88bff;box-shadow:0 0 0 2px #9d7bed44}
+input[type="checkbox"]{width:20px;height:20px;min-height:auto;display:inline-block;margin:0;accent-color:#8a7cf0}
+input[type="file"]{display:none}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+button{border:1px solid #5b7097;border-radius:12px;padding:12px 15px;min-height:44px;background:#203458;color:#fff;font:inherit;font-weight:770;cursor:pointer}button:disabled{opacity:.45;cursor:wait}.primary{background:linear-gradient(100deg,#8d5add,#416dc5);border:1px solid #997ee7;color:white}.danger{background:#4b293c;border-color:#975b75}.full{width:100%}
+.actionbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:17px}
+.hidden{display:none!important}.notice{white-space:pre-wrap;line-height:1.8;font-size:13px;min-height:18px;margin-top:12px;color:#f6bfc5}.notice.ok{color:var(--green)}.meta{font-size:12px;color:#92a8c8;margin:12px 0}
+.offer,.service{border:1px solid #455b82;border-radius:17px;padding:16px;background:#10203b;margin-top:13px}.offer-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.offer-head strong{font-size:16px}.offer-head .button-group{display:flex;gap:6px;flex-wrap:wrap}.offer-head button{min-height:35px;padding:7px 10px;font-size:12px}.imgpreview{max-width:100%;max-height:190px;border:1px solid #637b99;border-radius:13px;object-fit:contain;display:none;margin:11px 0}
+.row-btns{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}.row-btns button{font-size:13px}.service{display:grid;grid-template-columns:80px 1fr 1.4fr auto;align-items:end;gap:10px}.service label{margin-top:0}.service button{min-height:42px}
+.small{font-size:12px;color:#94a8cb;line-height:1.8}.checkline{display:flex;gap:10px;align-items:center;margin:12px 0}
+.savebar{position:sticky;bottom:10px;z-index:10;background:#0d1935ec;backdrop-filter:blur(12px);border:1px solid #506a96;border-radius:18px;padding:13px;display:flex;gap:10px;align-items:center;justify-content:space-between;box-shadow:0 14px 40px #0008}.savebar button{flex:1}.savebar .previewlink{flex:1}
+@media(max-width:650px){.grid2{grid-template-columns:1fr}.panel{padding:17px}header{margin-bottom:20px}.service{grid-template-columns:62px 1fr;align-items:end}.service .remove{grid-column:2}.offer-head{flex-wrap:wrap}.logo{font-size:20px}.savebar button,.savebar a{font-size:12px;padding:11px 6px}}
+</style>
+</head>
+<body>
+<main>
+<header><div class="logo">MATAR <small>CONTROL</small></div><a href="../" target="_blank" rel="noopener noreferrer">معاينة صفحة QR ↗</a></header>
+<div class="hero"><div class="kicker">OWNER ONLY • إدارة خاصة</div><h1>تحكّم بصفحة المحطة</h1><p>غيّر العروض والصور والأسعار والروابط مباشرةً من تلفونك. التعديلات بتوصل لنفس صفحة الـQR من دون تغيير رمز الطباعة.</p></div>
+<section id="loginPanel" class="panel">
+<h2>تسجيل دخول المالك</h2><p class="sub">استعمل بريد وكلمة سر حساب المالك على Supabase. ما في تسجيل حساب جديد من هالصفحة.</p>
+<form id="loginForm">
+<label for="ownerEmail">بريد المالك</label><input type="email" id="ownerEmail" autocomplete="username" required placeholder="owner@example.com">
+<label for="ownerPassword">كلمة السر</label><input type="password" id="ownerPassword" autocomplete="current-password" required>
+<button type="submit" class="primary full" id="loginBtn" style="margin-top:18px">دخول لوحة التحكّم</button></form>
+<p class="small">إذا رفضت الصفحة صلاحية المالك، لازم نكمّل إعداد قاعدة البيانات مرة واحدة أولاً.</p>
+</section>
+<div id="editor" class="hidden">
+<div class="actionbar"><div id="identity" class="small"></div><button type="button" id="reloadBtn">تحديث المحتوى</button><button type="button" id="logoutBtn">تسجيل خروج</button></div>
+<section class="panel">
+<h2>📣 الإعلان الرئيسي</h2><p class="sub">الشريط اللي بيظهر فوق الصفحة.</p>
+<div class="checkline"><input id="announcementVisible" type="checkbox"><label for="announcementVisible" style="margin:0">إظهار الشريط</label></div>
+<label for="announcementText">نص الإعلان</label><textarea id="announcementText" rows="2" placeholder="أحدث عرض أو خبر للمحطة"></textarea>
+</section>
+<section class="panel">
+<h2>🖼️ العروض والدعايات</h2><p class="sub">أضف أو عدّل أو احذف حتى 8 إعلانات. فيك ترفع صورة من التلفون، تكتب السعر وتحدد رابط زر الإعلان.</p>
+<div id="offersContainer"></div><div class="row-btns"><button id="addOffer" type="button">+ إضافة عرض جديد</button></div>
+<p class="small">صور JPG أو PNG أو WebP، حجم الصورة لحدّ 4 MB. الصورة المرفوعة بتكون عامة للعرض على الصفحة.</p>
+</section>
+<section class="panel">
+<h2>🌐 الموقع والتواصل</h2>
+<div class="grid2"><div><label for="website">رابط موقع MATAR الرسمي</label><input dir="ltr" id="website" type="url" placeholder="https://..."></div>
+<div><label for="phone">هاتف الاتصال</label><input dir="ltr" id="phone" type="tel" placeholder="+961..."></div>
+<div><label for="mapMain">رابط خريطة المحطة الكبيرة</label><input dir="ltr" id="mapMain" type="url" placeholder="https://maps.google.com/..."></div>
+<div><label for="mapSmall">رابط خريطة المحطة الصغيرة</label><input dir="ltr" id="mapSmall" type="url" placeholder="https://maps.google.com/..."></div></div>
+</section>
+<section class="panel">
+<h2>📲 السوشال ميديا</h2><p class="sub">إذا تركت الرابط فاضي، الزر بيظهر «قيد الإضافة» وما بيكون قابل للكبس.</p>
+<div class="grid2" id="socialInputs"></div>
+</section>
+<section class="panel">
+<h2>⛽ خدمات المحطة</h2><p class="sub">بتقدر تعدّل أسماء الخدمات وتضيف خدمات جديدة.</p>
+<div id="servicesContainer"></div>
+<div class="row-btns"><button id="addService" type="button">+ إضافة خدمة</button></div>
+</section>
+<div class="savebar"><button class="primary" id="saveBtn" type="button">حفظ ونشر التعديلات</button><a class="previewlink" href="../" target="_blank" rel="noopener noreferrer">شوف الصفحة ↗</a></div>
+<p class="small">النشر بيعدّل المحتوى فقط، ومش كود الموقع. حفظ الموقع محمي بصلاحيات Supabase RLS.</p>
+</div>
+<div class="notice" id="status" role="status" aria-live="polite"></div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+'use strict';
+const URL='https://zvxotwnwdkywttdjojpx.supabase.co';
+const KEY='sb_publishable__-ImiWyhptaElvhhvon7MQ_vffPtuFV';
+const $=id=>document.getElementById(id);
+const sb=window.supabase?.createClient(URL,KEY,{auth:{storageKey:'matar-qr-owner-v1',persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
+let user=null, data=null, loaded=false, busy=false;
+const msg=(s,ok=false)=>{$('status').textContent=s;$('status').className='notice'+(ok?' ok':'')};
+const el=(tag,cls,t)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(t!=null)n.textContent=String(t);return n};
+function makeField(title,value,onInput,options={}){
+  const wrap=el('div');
+  const label=el('label',null,title);
+  const field=el(options.multiline?'textarea':'input');
+  if(!options.multiline){field.type=options.type||'text';if(options.type==='url')field.dir='ltr'}
+  field.value=value==null?'':String(value);field.placeholder=options.placeholder||'';
+  field.addEventListener('input',()=>{onInput(field.value);dirty()});
+  wrap.append(label,field);return wrap
+}
+function dirty(){if(loaded)msg('عندك تغييرات غير محفوظة. اضغط «حفظ ونشر التعديلات».',true)}
+function asWebLink(s){const v=String(s||'').trim();return v==='' || /^https:\/\/[^\s<>"']+$/i.test(v)}
+function setEditor(show){$('editor').classList.toggle('hidden',!show);$('loginPanel').classList.toggle('hidden',show)}
+async function signOut(){if(sb)await sb.auth.signOut();user=null;data=null;loaded=false;setEditor(false);$('ownerPassword').value='';msg('تم تسجيل الخروج.',true)}
+$('logoutBtn').addEventListener('click',()=>{signOut().catch(()=>msg('تعذّر تسجيل الخروج.'))});
+$('loginForm').addEventListener('submit',async e=>{
+  e.preventDefault();if(!sb){msg('مكتبة Supabase ما تحمّلت.');return}
+  const btn=$('loginBtn');btn.disabled=true;msg('عم نتحقق من الدخول…',true);
+  try{
+    const {data:login,error}=await sb.auth.signInWithPassword({email:$('ownerEmail').value.trim(),password:$('ownerPassword').value});
+    $('ownerPassword').value='';
+    if(error||!login?.user){msg('ما قدرنا نسجّل الدخول. تأكد من البريد وكلمة السر.');return}
+    await activate(login.user);
+  }catch{msg('في مشكلة بالاتصال. حاول مجدداً.')}
+  finally{btn.disabled=false}
+});
+async function activate(signedInUser){
+  const {data:authorized,error}=await sb.rpc('matar_qr_is_admin');
+  if(error){msg('صلاحية المالك بعدا مش مهيّأة. لازم ننفّذ ملف إعداد Supabase SQL أولاً.');return}
+  if(!authorized){msg('هيدا الحساب مش مضاف كمالك للـQR. تواصل مع الإدارة لتفعيل الصلاحية.');return}
+  user=signedInUser;
+  $('identity').textContent='المالك: '+(signedInUser.email||'حساب مسجّل');
+  setEditor(true);await loadData();
+}
+async function loadData(){
+  if(!sb||!user)return;loaded=false;msg('عم نحمّل العروض الموجودة…',true);
+  try{
+    const baseline=await fetch('../content.json',{cache:'no-store'});
+    if(!baseline.ok)throw Error('تعذّر تحميل محتوى QR الأساسي.');
+    const backup=await baseline.json();
+    const {data:row,error}=await sb.from('matar_qr_content').select('content').eq('id','main').maybeSingle();
+    if(error)throw Error('تعذّر قراءة جدول المحتوى: '+error.message);
+    data=row?.content && typeof row.content==='object'?row.content:backup;
+    renderAll();loaded=true;msg(row?'العروض الحالية تحمّلت من Supabase.':'جاهز للتعديل. أول حفظ رح ينشئ النسخة المنشورة على Supabase.',true);
+  }catch(e){msg('تعذّر تحميل المحتوى: '+(e.message||'مشكلة غير معروفة'))}
+}
+$('reloadBtn').addEventListener('click',()=>{if(confirm('بدك تلغي التعديلات غير المحفوظة وتحمّل آخر نسخة؟'))loadData()});
+function value(id,v){$(id).value=String(v||'')}
+function fieldBind(id,obj,k){value(id,obj[k]);$(id).oninput=()=>{obj[k]=$(id).value;dirty()}}
+function renderAll(){
+  if(!data.links)data.links={};
+  if(!data.announcement)data.announcement={visible:false,text:''};
+  if(!Array.isArray(data.promos))data.promos=[];
+  if(!Array.isArray(data.services))data.services=[];
+  if(!Array.isArray(data.social))data.social=[];
+  $('announcementVisible').checked=!!data.announcement.visible;
+  $('announcementVisible').onchange=()=>{data.announcement.visible=$('announcementVisible').checked;dirty()};
+  fieldBind('announcementText',data.announcement,'text');
+  fieldBind('website',data.links,'website');fieldBind('phone',data.links,'phone');
+  fieldBind('mapMain',data.links,'googleMapsMain');fieldBind('mapSmall',data.links,'googleMapsSmall');
+  const names=[['Instagram','instagram','IG'],['Facebook','facebook','f'],['TikTok','tiktok','♪'],['WhatsApp','whatsapp','WA']];
+  $('socialInputs').replaceChildren();
+  for(const [name,tone,icon] of names){
+    let item=data.social.find(s=>String(s.name).toLowerCase()===name.toLowerCase());
+    if(!item){item={name,icon,tone,url:''};data.social.push(item)}
+    $('socialInputs').append(makeField(name,item.url,v=>item.url=v,{type:'url',placeholder:'https://...'}))
+  }
+  renderOffers();renderServices();
+}
+function renderOffers(){
+  const container=$('offersContainer');container.replaceChildren();
+  data.promos.forEach((offer,i)=>{
+    const card=el('section','offer');const head=el('div','offer-head');head.append(el('strong','', 'الإعلان '+(i+1)));
+    const buttons=el('div','button-group');const up=el('button',null,'↑');const down=el('button',null,'↓');const del=el('button','danger','حذف');
+    up.type=down.type=del.type='button';up.disabled=i===0;down.disabled=i===data.promos.length-1;
+    up.onclick=()=>{[data.promos[i-1],data.promos[i]]=[data.promos[i],data.promos[i-1]];dirty();renderOffers()};
+    down.onclick=()=>{[data.promos[i+1],data.promos[i]]=[data.promos[i],data.promos[i+1]];dirty();renderOffers()};
+    del.onclick=()=>{if(confirm('حذف هيدا الإعلان؟')){data.promos.splice(i,1);dirty();renderOffers()}};
+    buttons.append(up,down,del);head.append(buttons);card.append(head);
+    const grid=el('div','grid2');
+    const fields=[
+      ['العنوان', 'title','text','مثلاً: عرض غسيل سيارات'],
+      ['السعر / العبارة السعرية','price','text','مثلاً: 350,000 ل.ل.'],
+      ['شارة الإعلان','badge','text','عرض محدود'],
+      ['القسم','eyebrow','text','MATAR OFFERS'],
+      ['نص زر الإعلان','cta','text','شوف العرض'],
+      ['رابط زر الإعلان','href','url','https://... أو #services'],
+      ['رابط صورة الإعلان','imageUrl','url','https://...jpg']
+    ];
+    for(const [label,key,type,placeholder] of fields)grid.append(makeField(label,offer[key],v=>offer[key]=v,{type:type==='url'?'text':type,placeholder}));
+    grid.append(makeField('الوصف',offer.description,v=>offer.description=v,{multiline:true,placeholder:'تفاصيل العرض'}));
+    card.append(grid);
+    const row=el('div','row-btns');const upload=el('button',null,'📷 رفع صورة من التلفون');upload.type='button';
+    const choose=el('input');choose.type='file';choose.accept='image/jpeg,image/png,image/webp';choose.setAttribute('aria-label','اختيار صورة الإعلان');
+    upload.addEventListener('click',()=>choose.click());
+    const pic=el('img','imgpreview');pic.alt='صورة الإعلان';
+    const updatePreview=()=>{if(/^https:\/\//i.test(offer.imageUrl||'')){pic.src=offer.imageUrl;pic.style.display='block'}else{pic.removeAttribute('src');pic.style.display='none'}};
+    choose.addEventListener('change',async()=>{
+      const file=choose.files?.[0];if(!file)return;
+      if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>4194304){msg('اختار صورة JPG أو PNG أو WebP بحجم أقل من 4 MB.');return}
+      if(!user||!sb){msg('جلسة المالك غير متاحة.');return}
+      upload.disabled=true;msg('عم نرفع الصورة…',true);
+      try{
+        const ext={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'}[file.type];
+        const path='ads/'+crypto.randomUUID()+'.'+ext;
+        const {error}=await sb.storage.from('matar-qr-media').upload(path,file,{contentType:file.type,upsert:false,cacheControl:'3600'});
+        if(error)throw error;
+        const {data:pub}=sb.storage.from('matar-qr-media').getPublicUrl(path);
+        offer.imageUrl=pub.publicUrl;
+        const fields=[...grid.querySelectorAll('input')];
+        const imageField=fields[fields.length-1];
+        if(imageField)imageField.value=offer.imageUrl;
+        updatePreview();dirty();msg('تم رفع الصورة. اضغط حفظ ونشر حتى تظهر على صفحة الـQR.',true);
+      }catch(e){msg('فشل رفع الصورة: '+(e?.message||'خطأ غير معروف'))}
+      finally{upload.disabled=false;choose.value=''}
+    });
+    row.append(upload,choose);card.append(row,pic);updatePreview();
+    container.append(card);
+  });
+}
+$('addOffer').onclick=()=>{if(data.promos.length>=8){msg('الحد الأقصى 8 إعلانات.');return}data.promos.push({eyebrow:'MATAR',title:'عنوان العرض الجديد',description:'تفاصيل العرض',badge:'عرض جديد',price:'',cta:'شوف المزيد',href:'#services',theme:'offer',imageUrl:''});renderOffers();dirty()};
+function renderServices(){
+  const container=$('servicesContainer');container.replaceChildren();
+  data.services.forEach((srv,i)=>{
+    const card=el('div','service');
+    card.append(makeField('الأيقونة',srv.icon,v=>srv.icon=v),makeField('الخدمة',srv.title,v=>srv.title=v),makeField('الوصف المختصر',srv.caption,v=>srv.caption=v));
+    const del=el('button','danger remove','حذف');del.type='button';del.onclick=()=>{if(confirm('حذف هالخدمة من الصفحة؟')){data.services.splice(i,1);renderServices();dirty()}};
+    card.append(del);container.append(card);
+  });
+}
+$('addService').onclick=()=>{data.services.push({icon:'✓',title:'خدمة جديدة',caption:'وصف الخدمة'});renderServices();dirty()};
+async function save(){
+  if(!user||!loaded||!data||busy)return;
+  const urls=[data.links.website,data.links.googleMapsMain,data.links.googleMapsSmall,
+    ...data.social.map(s=>s.url),...data.promos.map(p=>p.imageUrl)];
+  if(urls.some(s=>!asWebLink(s))){msg('تأكد من روابط الموقع والصور والسوشال: لازم تبدأ بـ https:// أو تضل فاضية.');return}
+  if(!String(data.links.phone||'').match(/^\+?\d{8,16}$/)){msg('رقم الهاتف لازم يكون بصيغة دولية، مثلاً +961...');return}
+  for(const p of data.promos)if(!String(p.title||'').trim()){msg('كل عرض لازم يكون إلو عنوان.');return}
+  for(const srv of data.services)if(!String(srv.title||'').trim()){msg('كل خدمة لازم يكون إلها اسم.');return}
+  const btn=$('saveBtn');busy=true;btn.disabled=true;msg('عم ننشر التعديلات على Supabase…',true);
+  try{
+    const {error}=await sb.from('matar_qr_content').upsert({id:'main',content:data,updated_at:new Date().toISOString(),updated_by:user.id},{onConflict:'id'});
+    if(error)throw error;
+    msg('✓ انحفظت التعديلات. افتح صفحة الـQR أو حدّثها لتشوفها فوراً.',true);
+  }catch(e){msg('ما انحفظت التعديلات: '+(e?.message||'خطأ غير معروف'))}
+  finally{busy=false;btn.disabled=false}
+}
+$('saveBtn').addEventListener('click',save);
+(async()=>{if(!sb){msg('تعذّر تحميل Supabase. افحص الإنترنت.');return}try{const {data:r}=await sb.auth.getUser();if(r?.user)await activate(r.user)}catch{}})();
+})();
+</script>
+</body>
+</html>
