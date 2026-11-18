@@ -38,7 +38,7 @@ button{border:1px solid #5b7097;border-radius:12px;padding:12px 15px;min-height:
 <label for="ownerEmail">بريد المالك</label><input type="email" id="ownerEmail" autocomplete="username" required placeholder="owner@example.com">
 <label for="ownerPassword">كلمة السر</label><input type="password" id="ownerPassword" autocomplete="current-password" required>
 <button type="submit" class="primary full" id="loginBtn" style="margin-top:18px">دخول لوحة التحكّم</button></form>
-<p class="small">إذا رفضت الصفحة صلاحية المالك، لازم نكمّل إعداد قاعدة البيانات مرة واحدة أولاً.</p>
+<p class="small">إذا رفضت الصفحة صلاحية المالك، لازم نكمّل إعداد قاعدة البيانات مرة واحدة أولاً. <a href="./setup.sql" target="_blank" rel="noopener noreferrer" style="color:#bbaaff">فتح ملف الإعداد</a></p>
 </section>
 <div id="editor" class="hidden">
 <div class="actionbar"><div id="identity" class="small"></div><button type="button" id="reloadBtn">تحديث المحتوى</button><button type="button" id="logoutBtn">تسجيل خروج</button></div>
@@ -50,7 +50,7 @@ button{border:1px solid #5b7097;border-radius:12px;padding:12px 15px;min-height:
 <section class="panel">
 <h2>🖼️ العروض والدعايات</h2><p class="sub">أضف أو عدّل أو احذف حتى 8 إعلانات. فيك ترفع صورة من التلفون، تكتب السعر وتحدد رابط زر الإعلان.</p>
 <div id="offersContainer"></div><div class="row-btns"><button id="addOffer" type="button">+ إضافة عرض جديد</button></div>
-<p class="small">صور JPG أو PNG أو WebP، حجم الصورة لحدّ 4 MB. الصورة المرفوعة بتكون عامة للعرض على الصفحة.</p>
+<p class="small">صور JPG أو PNG أو WebP، وبنخفّف حجم الصور الكبيرة تلقائياً. الصورة المرفوعة بتكون عامة للعرض على الصفحة.</p>
 </section>
 <section class="panel">
 <h2>🌐 الموقع والتواصل</h2>
@@ -182,13 +182,26 @@ function renderOffers(){
     const updatePreview=()=>{if(/^https:\/\//i.test(offer.imageUrl||'')){pic.src=offer.imageUrl;pic.style.display='block'}else{pic.removeAttribute('src');pic.style.display='none'}};
     choose.addEventListener('change',async()=>{
       const file=choose.files?.[0];if(!file)return;
-      if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>4194304){msg('اختار صورة JPG أو PNG أو WebP بحجم أقل من 4 MB.');return}
+      if(!['image/jpeg','image/png','image/webp'].includes(file.type)){msg('اختار صورة JPG أو PNG أو WebP.');return}
       if(!user||!sb){msg('جلسة المالك غير متاحة.');return}
-      upload.disabled=true;msg('عم نرفع الصورة…',true);
+      upload.disabled=true;msg('عم نجهّز الصورة للرفع…',true);
       try{
-        const ext={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'}[file.type];
+        let body=file;let mime=file.type;
+        if(file.size>4194304){
+          const bitmap=await createImageBitmap(file);
+          const scale=Math.min(1,1600/Math.max(bitmap.width,bitmap.height));
+          const canvas=document.createElement('canvas');
+          canvas.width=Math.round(bitmap.width*scale);canvas.height=Math.round(bitmap.height*scale);
+          canvas.getContext('2d').drawImage(bitmap,0,0,canvas.width,canvas.height);
+          bitmap.close?.();
+          body=await new Promise(resolve=>canvas.toBlob(resolve,'image/webp',0.78));
+          mime='image/webp';
+          if(!body||body.size>4194304)throw Error('حجم الصورة كبير. جرّب صورة أصغر.');
+        }
+        msg('عم نرفع الصورة…',true);
+        const ext={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'}[mime];
         const path='ads/'+crypto.randomUUID()+'.'+ext;
-        const {error}=await sb.storage.from('matar-qr-media').upload(path,file,{contentType:file.type,upsert:false,cacheControl:'3600'});
+        const {error}=await sb.storage.from('matar-qr-media').upload(path,body,{contentType:mime,upsert:false,cacheControl:'3600'});
         if(error)throw error;
         const {data:pub}=sb.storage.from('matar-qr-media').getPublicUrl(path);
         offer.imageUrl=pub.publicUrl;
