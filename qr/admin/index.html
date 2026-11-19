@@ -43,6 +43,15 @@ button{border:1px solid #5b7097;border-radius:12px;padding:12px 15px;min-height:
 <div id="editor" class="hidden">
 <div class="actionbar"><div id="identity" class="small"></div><button type="button" id="reloadBtn">تحديث المحتوى</button><button type="button" id="logoutBtn">تسجيل خروج</button></div>
 <section class="panel">
+<h2>🛡️ شعار MATAR الرسمي</h2>
+<p class="sub">ارفع صورة الشعار الأصلي مثل ما هي، من دون تعديل أو قص. بعد الحفظ بتظهر بالشريط العلوي بصفحة الـQR.</p>
+<div class="row-btns"><button id="uploadLogoBtn" type="button">📷 رفع الشعار الأصلي</button><input id="logoFile" type="file" accept="image/png,image/jpeg,image/webp"></div>
+<img id="logoPreview" class="imgpreview" alt="معاينة الشعار الرسمي">
+<label for="logoUrl">رابط الشعار (بينكتب تلقائياً بعد الرفع)</label>
+<input id="logoUrl" type="url" dir="ltr" placeholder="https://...">
+<p class="small">حجم الملف لحد 4MB. الشعار بينرفع كما هو، وبحافظ على نسبته وألوانه الأصلية.</p>
+</section>
+<section class="panel">
 <h2>📣 الإعلان الرئيسي</h2><p class="sub">الشريط اللي بيظهر فوق الصفحة.</p>
 <div class="checkline"><input id="announcementVisible" type="checkbox"><label for="announcementVisible" style="margin:0">إظهار الشريط</label></div>
 <label for="announcementText">نص الإعلان</label><textarea id="announcementText" rows="2" placeholder="أحدث عرض أو خبر للمحطة"></textarea>
@@ -126,6 +135,17 @@ async function loadData(){
     const {data:row,error}=await sb.from('matar_qr_content').select('content').eq('id','main').maybeSingle();
     if(error)throw Error('تعذّر قراءة جدول المحتوى: '+error.message);
     data=row?.content && typeof row.content==='object'?row.content:backup;
+    if(Number(data.version||0)<3 && Number(backup.version||0)>=3){
+      if(!Array.isArray(data.social))data.social=[];
+      if(!data.links)data.links={};
+      for(const s of backup.social||[]){
+        let existing=data.social.find(x=>String(x.name).toLowerCase()===String(s.name).toLowerCase());
+        if(existing){if(!existing.url)existing.url=s.url}
+        else data.social.push({...s});
+      }
+      if(!data.links.whatsapp)data.links.whatsapp=backup.links?.whatsapp||'';
+      data.version=3;
+    }
     renderAll();loaded=true;msg(row?'العروض الحالية تحمّلت من Supabase.':'جاهز للتعديل. أول حفظ رح ينشئ النسخة المنشورة على Supabase.',true);
   }catch(e){msg('تعذّر تحميل المحتوى: '+(e.message||'مشكلة غير معروفة'))}
 }
@@ -134,6 +154,9 @@ function value(id,v){$(id).value=String(v||'')}
 function fieldBind(id,obj,k){value(id,obj[k]);$(id).oninput=()=>{obj[k]=$(id).value;dirty()}}
 function renderAll(){
   if(!data.links)data.links={};
+  if(!data.brand)data.brand={logoUrl:''};
+  fieldBind('logoUrl',data.brand,'logoUrl');
+  previewLogo();
   if(!data.announcement)data.announcement={visible:false,text:''};
   if(!Array.isArray(data.promos))data.promos=[];
   if(!Array.isArray(data.services))data.services=[];
@@ -216,6 +239,34 @@ function renderOffers(){
     container.append(card);
   });
 }
+function previewLogo(){
+  const logo=$('logoPreview');
+  const url=String(data?.brand?.logoUrl||'');
+  if(/^https:\/\/[^\s"'<>]+$/i.test(url)){logo.src=url;logo.style.display='block'}
+  else {logo.style.display='none';logo.removeAttribute('src')}
+}
+$('logoUrl').addEventListener('input',previewLogo);
+$('uploadLogoBtn').addEventListener('click',()=>$('logoFile').click());
+$('logoFile').addEventListener('change',async()=>{
+  const file=$('logoFile').files?.[0];if(!file)return;
+  if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>4194304){
+    msg('اختار صورة PNG أو JPG أو WebP للشعار الأصلي بحجم أقل من 4MB.');return;
+  }
+  if(!user||!sb||!data){msg('بدك تفوت بحساب المالك أولاً.');return}
+  const btn=$('uploadLogoBtn');btn.disabled=true;msg('عم نرفع الشعار الأصلي من دون تعديل…',true);
+  try{
+    const extension={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'}[file.type];
+    const path='logos/'+crypto.randomUUID()+'.'+extension;
+    const {error}=await sb.storage.from('matar-qr-media').upload(path,file,{contentType:file.type,upsert:false});
+    if(error)throw error;
+    const {data:publicUrl}=sb.storage.from('matar-qr-media').getPublicUrl(path);
+    data.brand=data.brand||{};
+    data.brand.logoUrl=publicUrl.publicUrl;
+    $('logoUrl').value=data.brand.logoUrl;
+    previewLogo();dirty();msg('✓ الشعار ارتفع كما هو. اضغط حفظ ونشر التعديلات ليظهر للزبائن.',true);
+  }catch(e){msg('تعذّر رفع الشعار: '+(e.message||'خطأ غير معروف'))}
+  finally{btn.disabled=false;$('logoFile').value=''}
+});
 $('addOffer').onclick=()=>{if(data.promos.length>=8){msg('الحد الأقصى 8 إعلانات.');return}data.promos.push({eyebrow:'MATAR',title:'عنوان العرض الجديد',description:'تفاصيل العرض',badge:'عرض جديد',price:'',cta:'شوف المزيد',href:'#services',theme:'offer',imageUrl:''});renderOffers();dirty()};
 function renderServices(){
   const container=$('servicesContainer');container.replaceChildren();
