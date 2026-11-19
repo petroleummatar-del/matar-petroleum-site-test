@@ -139,12 +139,14 @@ if(c.note){$('editNote').hidden=!c.note.visible;$('editNote').textContent=c.note
 const fallback={promos:[{title:'كل نقطة بتعمل فرق',description:'تابع نقاطك ومكافآتك من تلفونك.',eyebrow:'MATAR CLUB',badge:'برنامج الولاء',cta:'MATAR CLUB',href:'../club/',theme:'club'}],social:[{name:'Instagram',icon:'IG'},{name:'Facebook',icon:'f'},{name:'TikTok',icon:'♪'},{name:'WhatsApp',icon:'WA'}],services:[{icon:'⛽',title:'بنزين 95 و98',caption:'تعبئة دقيقة'},{icon:'⚡',title:'شحن كهربائي',caption:'EV Charger'}]};
 render(fallback);
 (async()=>{
-  // Static GitHub content works as a safe fallback until the owner installs Supabase migration.
+  // Latest GitHub copy stays available if Supabase is temporarily unavailable.
+  let backupContent=null;
   try{
     const baseline=await fetch('./content.json',{cache:'no-store'});
-    if(baseline.ok)render(await baseline.json());
+    if(baseline.ok){backupContent=await baseline.json();render(backupContent)}
   }catch{}
-  // Published owner-approved edits take precedence over the static fallback.
+  // An older owner-saved copy may contain empty social links. Add the official
+  // links supplied by the owner, without touching previously saved ads or prices.
   try{
     const response=await fetch('https://zvxotwnwdkywttdjojpx.supabase.co/rest/v1/matar_qr_content?select=content&id=eq.main',{
       headers:{'apikey':'sb_publishable__-ImiWyhptaElvhhvon7MQ_vffPtuFV'},
@@ -152,7 +154,20 @@ render(fallback);
     });
     if(!response.ok)return;
     const rows=await response.json();
-    if(Array.isArray(rows)&&rows[0]?.content&&typeof rows[0].content==='object')render(rows[0].content);
+    if(Array.isArray(rows)&&rows[0]?.content&&typeof rows[0].content==='object'){
+      const saved=rows[0].content;
+      if(Number(saved.version||0)<3 && backupContent && Number(backupContent.version||0)>=3){
+        const merged={...saved,links:{...(saved.links||{})},social:Array.isArray(saved.social)?saved.social.map(x=>({...x})):[]};
+        if(!merged.links.whatsapp)merged.links.whatsapp=backupContent.links?.whatsapp||'';
+        for(const link of backupContent.social||[]){
+          const existing=merged.social.find(x=>String(x.name).toLowerCase()===String(link.name).toLowerCase());
+          if(existing){if(!existing.url)existing.url=link.url}
+          else merged.social.push({...link});
+        }
+        merged.version=3;
+        render(merged);
+      }else render(saved);
+    }
   }catch{}
 })();
 })();
