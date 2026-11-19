@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "brand": {
     "name": "MATAR PETROLEUM",
     "arabic": "محطات مطر",
@@ -15,32 +15,32 @@
     "website": "https://matar-petroleum-zahle.netlify.app/",
     "club": "../club/",
     "phone": "+96170482824",
-    "whatsapp": "",
+    "whatsapp": "https://wa.me/96170482824",
     "googleMapsMain": "",
     "googleMapsSmall": ""
   },
   "social": [
     {
       "name": "Instagram",
-      "url": "",
+      "url": "https://www.instagram.com/matarpetroleum/",
       "icon": "IG",
       "tone": "instagram"
     },
     {
       "name": "Facebook",
-      "url": "",
+      "url": "https://www.facebook.com/share/1CCmFetDu5/",
       "icon": "f",
       "tone": "facebook"
     },
     {
       "name": "TikTok",
-      "url": "",
+      "url": "https://www.tiktok.com/@matar.petroleum",
       "icon": "♪",
       "tone": "tiktok"
     },
     {
       "name": "WhatsApp",
-      "url": "",
+      "url": "https://wa.me/96170482824",
       "icon": "WA",
       "tone": "whatsapp"
     }
