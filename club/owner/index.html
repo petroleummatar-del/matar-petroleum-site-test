@@ -7,7 +7,7 @@
 <form id="ownerLogin"><label for="ownerEmail">بريد حساب المالك على Supabase</label><input id="ownerEmail" type="email" autocomplete="username" required placeholder="name@example.com"><label for="ownerPass">كلمة سر المالك</label><input id="ownerPass" type="password" autocomplete="current-password" required><button id="ownerLoginBtn" class="primary" type="submit">دخول المالك</button></form>
 </div>
 <div class="hidden" id="ownerArea"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><strong>حساب المالك متصل</strong><button class="minor" type="button" id="logout">خروج</button></div>
-<section class="result" style="margin-top:18px"><h2 style="font-size:20px">طلبات العضوية الجديدة</h2><p class="hint">بعد التأكد من صاحب الرقم شخصياً، اطلب منه رمز المطابقة الظاهر على تلفونه. لا تطلب منه كلمة السر.</p><button id="refreshRequests" class="minor" type="button">تحديث الطلبات</button><div id="pendingRequests" class="notice" aria-live="polite">اضغط تحديث الطلبات.</div></section><form id="issueForm"><label for="memberPhone">رقم الزبون المسجل في MATAR CLUB</label><input id="memberPhone" type="tel" inputmode="tel" autocomplete="off" placeholder="03 123 456" required><button id="issueBtn" class="primary" type="submit">إصدار رمز تفعيل</button></form>
+<section class="result" style="margin-top:18px"><h2 style="font-size:20px">طلبات العضوية الجديدة</h2><p class="hint">الموافقة إلك وحدك. قبل الموافقة تأكد من صاحب الرقم شخصياً. ما تطلب كلمة السر من الزبون.</p><button id="refreshRequests" class="minor" type="button">تحديث الطلبات</button><div id="pendingRequests" class="notice" aria-live="polite">اضغط تحديث الطلبات.</div></section><form id="issueForm"><label for="memberPhone">رقم الزبون المسجل في MATAR CLUB</label><input id="memberPhone" type="tel" inputmode="tel" autocomplete="off" placeholder="03 123 456" required><button id="issueBtn" class="primary" type="submit">إصدار رمز تفعيل</button></form>
 <div id="activationResult" class="hidden result" aria-live="polite"><div class="hint">رمز التفعيل — أعطه للزبون شخصياً فقط</div><div class="secret" id="codeText"></div><div id="memberName" class="ok"></div><p>الرمز صالح 20 دقيقة ولمرة واحدة فقط. بعد خمس محاولات خاطئة يحتاج رمزاً جديداً.</p><button id="clearCode" class="minor" type="button">إخفاء الرمز</button></div>
 </div>
 <div class="notice" id="status" role="status" aria-live="polite"></div>
@@ -32,18 +32,20 @@ async function loadPending(){
   const wrap=document.createElement('div');wrap.className='result';
   const name=document.createElement('strong');name.textContent=String(req.name||'زبون')+' — '+String(req.phone||'');
   const detail=document.createElement('p');detail.className='hint';detail.textContent='الطلب: '+new Date(req.created_at).toLocaleString('ar-LB');
-  const input=document.createElement('input');input.type='text';input.inputMode='numeric';input.maxLength=6;input.placeholder='رمز المطابقة من 6 أرقام';input.autocomplete='off';
+  
   const btn=document.createElement('button');btn.className='primary';btn.type='button';btn.textContent='الموافقة بعد التحقق';
   const feedback=document.createElement('div');feedback.className='notice';
   btn.addEventListener('click',async()=>{
-   if(!/^\d{6}$/.test(input.value)){feedback.textContent='أدخل رمز المطابقة الصحيح.';return}
+   
    btn.disabled=true;
-   const {data:result,error:e}=await sb.rpc('matar_owner_approve_customer_signup',{p_request_id:req.id,p_pairing_code:input.value});
-   input.value='';
+   const {data:result,error:e}=await sb.rpc('matar_owner_approve_customer_signup',{p_request_id:req.id});
    if(e||!result?.ok){feedback.textContent='تعذّرت الموافقة. تأكد من الرمز وصاحب الرقم.';btn.disabled=false;return}
-   await loadPending();
+   const phone=String(result.phone||'').replace(/[^0-9]/g,'');
+   const message='أهلاً وسهلاً فيك بعيلة MATAR CLUB! 🎉\nتمّت الموافقة على عضويتك بنجاح ✅\nافتح حسابك وشوف نقاطك ومكافآتك:\nhttps://qr.matarpetroleumlb.com/club/';
+   const wa=document.createElement('a');wa.href='https://wa.me/'+phone+'?text='+encodeURIComponent(message);wa.target='_blank';wa.rel='noopener noreferrer';wa.textContent='إرسال قبول العضوية عبر واتساب';wa.className='primary';wa.style.display='block';wa.style.textAlign='center';wa.style.textDecoration='none';wa.style.marginTop='12px';
+   clean(el);el.append(document.createTextNode('تمّت الموافقة على '+String(result.name||'الزبون')+'. افتح واتساب لإرسال رسالة القبول:'),wa);
   });
-  wrap.append(name,detail,input,btn,feedback);el.append(wrap)
+  wrap.append(name,detail,btn,feedback);el.append(wrap)
  }
 }
 $('refreshRequests').addEventListener('click',()=>{if(authOK&&sb)loadPending()});
