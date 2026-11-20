@@ -7,7 +7,7 @@
 <form id="ownerLogin"><label for="ownerEmail">بريد حساب المالك على Supabase</label><input id="ownerEmail" type="email" autocomplete="username" required placeholder="name@example.com"><label for="ownerPass">كلمة سر المالك</label><input id="ownerPass" type="password" autocomplete="current-password" required><button id="ownerLoginBtn" class="primary" type="submit">دخول المالك</button></form>
 </div>
 <div class="hidden" id="ownerArea"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><strong>حساب المالك متصل</strong><button class="minor" type="button" id="logout">خروج</button></div>
-<form id="issueForm"><label for="memberPhone">رقم الزبون المسجل في MATAR CLUB</label><input id="memberPhone" type="tel" inputmode="tel" autocomplete="off" placeholder="03 123 456" required><button id="issueBtn" class="primary" type="submit">إصدار رمز تفعيل</button></form>
+<section class="result" style="margin-top:18px"><h2 style="font-size:20px">طلبات العضوية الجديدة</h2><p class="hint">بعد التأكد من صاحب الرقم شخصياً، اطلب منه رمز المطابقة الظاهر على تلفونه. لا تطلب منه كلمة السر.</p><button id="refreshRequests" class="minor" type="button">تحديث الطلبات</button><div id="pendingRequests" class="notice" aria-live="polite">اضغط تحديث الطلبات.</div></section><form id="issueForm"><label for="memberPhone">رقم الزبون المسجل في MATAR CLUB</label><input id="memberPhone" type="tel" inputmode="tel" autocomplete="off" placeholder="03 123 456" required><button id="issueBtn" class="primary" type="submit">إصدار رمز تفعيل</button></form>
 <div id="activationResult" class="hidden result" aria-live="polite"><div class="hint">رمز التفعيل — أعطه للزبون شخصياً فقط</div><div class="secret" id="codeText"></div><div id="memberName" class="ok"></div><p>الرمز صالح 20 دقيقة ولمرة واحدة فقط. بعد خمس محاولات خاطئة يحتاج رمزاً جديداً.</p><button id="clearCode" class="minor" type="button">إخفاء الرمز</button></div>
 </div>
 <div class="notice" id="status" role="status" aria-live="polite"></div>
@@ -22,9 +22,34 @@ const msg=(s,ok=false)=>{$('status').textContent=s;$('status').className='notice
 let authOK=false;
 function phoneE164(s){let x=String(s).replace(/[^\d+]/g,'');if(x.startsWith('00'))x='+'+x.slice(2);if(x.startsWith('961'))x='+'+x;if(x.startsWith('0'))x='+961'+x.slice(1);else if(!x.startsWith('+'))x='+961'+x;return /^\+961\d{7,8}$/.test(x)?x:null}
 function showOwner(yes){authOK=yes;$('signInArea').classList.toggle('hidden',yes);$('ownerArea').classList.toggle('hidden',!yes)}
+function clean(el){while(el.firstChild)el.removeChild(el.firstChild)}
+async function loadPending(){
+ const el=$('pendingRequests');clean(el);
+ const {data,error}=await sb.rpc('matar_owner_pending_customer_signups');
+ if(error){el.textContent='تعذّر تحميل الطلبات. تأكد من صلاحية المالك.';return}
+ if(!Array.isArray(data)||!data.length){el.textContent='ما في طلبات جديدة حالياً.';return}
+ for(const req of data){
+  const wrap=document.createElement('div');wrap.className='result';
+  const name=document.createElement('strong');name.textContent=String(req.name||'زبون')+' — '+String(req.phone||'');
+  const detail=document.createElement('p');detail.className='hint';detail.textContent='الطلب: '+new Date(req.created_at).toLocaleString('ar-LB');
+  const input=document.createElement('input');input.type='text';input.inputMode='numeric';input.maxLength=6;input.placeholder='رمز المطابقة من 6 أرقام';input.autocomplete='off';
+  const btn=document.createElement('button');btn.className='primary';btn.type='button';btn.textContent='الموافقة بعد التحقق';
+  const feedback=document.createElement('div');feedback.className='notice';
+  btn.addEventListener('click',async()=>{
+   if(!/^\d{6}$/.test(input.value)){feedback.textContent='أدخل رمز المطابقة الصحيح.';return}
+   btn.disabled=true;
+   const {data:result,error:e}=await sb.rpc('matar_owner_approve_customer_signup',{p_request_id:req.id,p_pairing_code:input.value});
+   input.value='';
+   if(e||!result?.ok){feedback.textContent='تعذّرت الموافقة. تأكد من الرمز وصاحب الرقم.';btn.disabled=false;return}
+   await loadPending();
+  });
+  wrap.append(name,detail,input,btn,feedback);el.append(wrap)
+ }
+}
+$('refreshRequests').addEventListener('click',()=>{if(authOK&&sb)loadPending()});
 function hideCode(){$('codeText').textContent='';$('memberName').textContent='';$('activationResult').classList.add('hidden')}
 $('clearCode').addEventListener('click',hideCode);
-$('ownerLogin').addEventListener('submit',async e=>{e.preventDefault();if(!sb){msg('فشل تحميل مكتبة Supabase.');return}const b=$('ownerLoginBtn');b.disabled=true;msg('عم نتحقق من حساب المالك…',true);try{const {error}=await sb.auth.signInWithPassword({email:$('ownerEmail').value.trim(),password:$('ownerPass').value});$('ownerPass').value='';if(error){msg('تعذّر الدخول. تأكد من حساب المالك.');return}showOwner(true);msg('تم الدخول. إصدار الرمز محمي بصلاحيات قاعدة البيانات.',true)}catch{msg('تعذّر الاتصال بخدمة تسجيل الدخول.')}finally{b.disabled=false}});
+$('ownerLogin').addEventListener('submit',async e=>{e.preventDefault();if(!sb){msg('فشل تحميل مكتبة Supabase.');return}const b=$('ownerLoginBtn');b.disabled=true;msg('عم نتحقق من حساب المالك…',true);try{const {error}=await sb.auth.signInWithPassword({email:$('ownerEmail').value.trim(),password:$('ownerPass').value});$('ownerPass').value='';if(error){msg('تعذّر الدخول. تأكد من حساب المالك.');return}showOwner(true);loadPending();msg('تم الدخول. إصدار الرمز محمي بصلاحيات قاعدة البيانات.',true)}catch{msg('تعذّر الاتصال بخدمة تسجيل الدخول.')}finally{b.disabled=false}});
 $('issueForm').addEventListener('submit',async e=>{e.preventDefault();if(!authOK||!sb)return;const p=phoneE164($('memberPhone').value);if(!p){msg('أدخل رقم موبايل لبناني صحيح.');return}hideCode();const b=$('issueBtn');b.disabled=true;msg('عم نفحص صلاحيات المالك ونصدر الرمز…',true);try{const {data,error}=await sb.rpc('matar_owner_issue_activation',{p_phone:p});if(error||!data?.ok||!data.code){msg('ما قدرنا نصدر الرمز. تأكد إن حسابك مالك وإن الزبون مسجل ونشط وغير مفعّل.');return}$('codeText').textContent=String(data.code);$('memberName').textContent='الزبون: '+(data.member_name||'عضو MATAR CLUB');$('activationResult').classList.remove('hidden');msg('تم إصدار رمز التفعيل بنجاح.',true)}catch{msg('تعذّر تنفيذ طلب إصدار الرمز.')}finally{b.disabled=false}});
 $('logout').addEventListener('click',async()=>{hideCode();if(sb)await sb.auth.signOut();showOwner(false);$('ownerEmail').value='';msg('تم تسجيل الخروج.',true)});
 if(!sb)msg('مكتبة Supabase لم تتحمّل، افتح الصفحة من متصفح آخر.');
