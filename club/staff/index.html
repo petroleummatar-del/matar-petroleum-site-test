@@ -3,5 +3,17 @@ const sb=supabase.createClient('https://zvxotwnwdkywttdjojpx.supabase.co','sb_pu
 $('enter').onclick=async()=>{busy('enter',true);try{const {data,error}=await sb.rpc('matar_worker_login',{p_name:$('worker').value.trim(),p_pin:$('pin').value});const w=data?.[0];if(error||!w?.session_token)throw Error('تعذّر الدخول. تأكد من الاسم والرمز.');token=w.session_token;$('pin').value='';$('login').hidden=true;$('work').hidden=false;say('أهلاً '+w.worker_name)}catch(e){say(e.message)}finally{busy('enter',false)}};
 $('find').onclick=async()=>{member=null;$('member').textContent='';const p=phone($('phone').value);if(!p)return say('رقم غير صحيح');busy('find',true);try{const {data,error}=await sb.rpc('matar_worker_find_member',{p_session_token:token,p_phone:p});if(error)throw error;member=data?.[0]||null;$('member').textContent=member?member.member_name+' — الرصيد: '+member.points_balance:'الزبون غير موجود أو عضويته غير فعّالة';say(member?'تم العثور على الزبون':'لم يتم العثور على الزبون')}catch(e){say(e.message)}finally{busy('find',false)}};
 $('submit').onclick=async()=>{if(!member)return say('ابحث عن الزبون أولاً');const q=Number($('liters').value),ref=$('ref').value.trim();if(!(q>0)||ref.length<8)return say('أدخل الكمية ورقم فاتورة صحيح');if(!confirm('تأكيد تعبئة '+q+' ليتر للزبون '+member.member_name+'؟'))return;busy('submit',true);try{const {data,error}=await sb.rpc('matar_worker_submit_refuel',{p_session_token:token,p_member_id:member.member_id,p_branch_id:$('branch').value,p_service_code:$('fuel').value,p_quantity:q,p_reference_code:ref,p_license_plate:$('plate').value.trim()||null});if(error)throw error;say(data.status==='pending'?'التعبئة بانتظار موافقة المالك. النقاط لم تُضف بعد.':'تم تسجيل التعبئة وإضافة '+data.points_added+' نقطة');$('ref').value='';$('liters').value='';member=null;$('member').textContent=''}catch(e){say('تعذّر تسجيل التعبئة: '+e.message)}finally{busy('submit',false)}};
-$('logout').onclick=()=>location.reload();
+$('logout').onclick=async()=>{
+ if(!token){location.reload();return;}
+ busy('logout',true);
+ try{
+  const {data,error}=await sb.rpc('matar_worker_logout',{p_session_token:token});
+  if(error)throw error;
+  token=null;member=null;
+  $('work').hidden=true;$('login').hidden=false;
+  $('pin').value='';$('member').textContent='';$('phone').value='';
+  say(data?'تم تسجيل الخروج وإلغاء جلسة الموظف.':'تم الخروج. لم تكن الجلسة فعّالة.');
+ }catch(e){say('تعذّر إنهاء الجلسة على الخادم. افحص الاتصال وأعد المحاولة.');}
+ finally{busy('logout',false);}
+};
 </script></html>
