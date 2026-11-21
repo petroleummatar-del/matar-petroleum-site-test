@@ -512,7 +512,7 @@ document.getElementById('fuelReceiptBack').onclick=()=>fuel.scrollIntoView({beha
  let customerClient=null;
  let busy=false;
  const notify=(element,msg,good=false)=>{element.textContent=msg;element.style.color=good?'#a4f5d7':'#ffd0d0';};
- const showLogin=()=>{login.hidden=false;account.hidden=true;};
+ const showLogin=()=>{login.hidden=false;account.hidden=true;const heroBalance=$('v16CustomerBalance');if(heroBalance)heroBalance.textContent='—';const accountBalance=$('v16CustomerPoints');if(accountBalance)accountBalance.textContent='—';};
  const showAccount=()=>{login.hidden=true;account.hidden=false;};
  function line(parent,label,detail,points){
   const node=document.createElement('div');
