@@ -226,16 +226,25 @@ const approvedRewardFallback=[
  {code:'cash_13',name_ar:'مكافأة نقدية 13 دولار',points_cost:1000}
 ];
 async function loadRewardOptions(isPinWorker){
- const result=await client.from('matar_rewards').select('code,name_ar,points_cost').order('points_cost');
- const rewards=(!result.error && Array.isArray(result.data) && result.data.length)?result.data:approvedRewardFallback;
  $('reward').replaceChildren();
- for(const item of rewards){
-  if(item.code.startsWith('cash_') && (isPinWorker || !['owner','manager'].includes(staff?.role)))continue;
-  const opt=document.createElement('option');opt.value=item.code;
-  opt.textContent=`${item.name_ar} — ${item.points_cost} نقطة`;$('reward').append(opt);
- }
- if(result.error || !result.data?.length){
-  show('status','تم عرض قائمة المكافآت المعتمدة محلياً؛ تأكيد الاستبدال يخضع لفحص قاعدة البيانات.',true);
+ const placeholder=new Option('عم نحمّل المكافآت من النظام...','');
+ $('reward').add(placeholder);
+ try{
+  const result=isPinWorker
+    ?await client.rpc('matar_worker_available_rewards',{p_session_token:workerSession?.token})
+    :await client.from('matar_rewards').select('code,name_ar,points_cost').eq('active',true).order('points_cost');
+  if(result.error)throw result.error;
+  const rewards=Array.isArray(result.data)?result.data:[];
+  $('reward').replaceChildren();
+  $('reward').add(new Option(rewards.length?'اختَر المكافأة':'لا توجد مكافآت متاحة',''));
+  for(const item of rewards){
+   if(item.code.startsWith('cash_') && (isPinWorker || !['owner','manager'].includes(staff?.role)))continue;
+   $('reward').add(new Option(`${item.name_ar} — ${item.points_cost} نقطة`,item.code));
+  }
+ }catch(e){
+  $('reward').replaceChildren();
+  $('reward').add(new Option('تعذّر تحميل المكافآت؛ جرّب مجدداً',''));
+  show('status','تعذّر تحميل المكافآت من قاعدة البيانات: '+e.message,false);
  }
 }
 async function loadSession(session){staff=null;current=null;clearBalance();$('memberInfo').textContent='';$('login').classList.toggle('hidden',!!session);$('app').classList.add('hidden');if(!session){if(workerSession){await loadWorkerView();return;}show('status','سجّل دخولك بحساب الموظف.',true);return;}
@@ -314,6 +323,10 @@ $('registerMemberBtn').onclick=async()=>{
  finally{busy('registerMemberBtn',false)}
 };
 $('find').onclick=findMember;
+$('phone').addEventListener('input',()=>{
+ current=null;clearBalance();$('memberInfo').textContent='';
+ $('selectedCustomerNotice').textContent='الخطوة الأولى: ابحث عن الزبون فوق، وبعدها سجّل التعبئة.';
+});
 $('earn').onclick=async()=>{
  if(isWorker()&&Date.parse(workerSession.expires)<=Date.now())return show('earnMsg','انتهت جلسة العامل، سجّل الدخول مجدداً.',false);
  if(!current)return show('earnMsg','ابحث عن الزبون أولاً.',false);
@@ -341,7 +354,7 @@ $('earn').onclick=async()=>{
   const added=fuel?Number(data.points_added):Number(data);
   show('earnMsg','✅ تم تسجيل العملية. النقاط المضافة: '+added,true);
   $('reference').value='';$('quantity').value='';$('fuelPlate').value='';
-  await refreshBalance(current.id);
+  if(isWorker())await findMember();else await refreshBalance(current.id);
   const branchName=branches.find(b=>b.id===$('branch').value)?.name_ar||'محطات مطر';
   try{window.matarFuelReceiptCreate?.({reference:ref,plate,branch:branchName,member:current.name,phone:current.phone,employee:isWorker()?(workerSession?.name||'موظف PIN'):(staff?.display_name||'الإدارة'),service:({gasoline:'بنزين',diesel:'مازوت',carwash:'غسيل سيارات',oil_change:'تغيير زيت'})[svc]||svc,quantity:q,points:added,time:new Date().toLocaleString('ar-LB',{timeZone:'Asia/Beirut'}),balance:document.getElementById('balanceValue')?.textContent||'غير متاح',serverResult:data});}catch(e){console.warn('Receipt preview failed',e)}
   const msg=`أهلاً ${current.name} 🌟\nشكراً لاختيارك ${branchName} من MATAR Petroleum.\nمنوّرنا دايماً! 💙`;
@@ -352,7 +365,7 @@ $('earn').onclick=async()=>{
 };
 function newRedeemReference(){return 'R-'+(globalThis.crypto?.randomUUID?.()||Date.now().toString(36)+'-'+Math.random().toString(36).slice(2));}
 $('redeemReference').value=newRedeemReference();
-$('redeem').onclick=async()=>{if(isWorker()&&Date.parse(workerSession.expires)<=Date.now())return show('redeemMsg','انتهت الجلسة. سجّل دخولك من جديد.',false);if(!current)return show('redeemMsg','ابحث عن الزبون أولاً.',false);const ref=$('redeemReference').value.trim()||newRedeemReference();$('redeemReference').value=ref;if(!confirm('تأكيد صرف المكافأة؟ العملية حقيقية على قاعدة البيانات.'))return;busy('redeem',true);const {data,error}=await client.rpc(isWorker()?'matar_worker_redeem_reward':'matar_redeem_reward',{...(isWorker()?{p_session_token:workerSession.token}:{}),p_member_id:current.id,p_branch_id:$('branch').value,p_reward_code:$('reward').value,p_reference_code:ref});busy('redeem',false);show('redeemMsg',error?'تم رفض الاستبدال: '+error.message:'تم الاستبدال. النتيجة: '+JSON.stringify(data),!error);if(!error){showRedeemReceipt(ref,$('reward').selectedOptions[0]?.textContent,branches.find(b=>b.id===$('branch').value)?.name_ar,current.name,workerSession?.name||staff?.display_name,data);$('redeemReference').value=newRedeemReference();if(workerSession)await findMember();else await refreshBalance(current.id);}};
+$('redeem').onclick=async()=>{if(isWorker()&&Date.parse(workerSession.expires)<=Date.now())return show('redeemMsg','انتهت الجلسة. سجّل دخولك من جديد.',false);if(!current)return show('redeemMsg','ابحث عن الزبون أولاً.',false);if(!$('reward').value)return show('redeemMsg','اختَر مكافأة متاحة أولاً.',false);const ref=$('redeemReference').value.trim()||newRedeemReference();$('redeemReference').value=ref;if(!confirm('تأكيد صرف المكافأة؟ العملية حقيقية على قاعدة البيانات.'))return;busy('redeem',true);const {data,error}=await client.rpc(isWorker()?'matar_worker_redeem_reward':'matar_redeem_reward',{...(isWorker()?{p_session_token:workerSession.token}:{}),p_member_id:current.id,p_branch_id:$('branch').value,p_reward_code:$('reward').value,p_reference_code:ref});busy('redeem',false);show('redeemMsg',error?'تم رفض الاستبدال: '+error.message:'تم الاستبدال. النتيجة: '+JSON.stringify(data),!error);if(!error){showRedeemReceipt(ref,$('reward').selectedOptions[0]?.textContent,branches.find(b=>b.id===$('branch').value)?.name_ar,current.name,workerSession?.name||staff?.display_name,data);$('redeemReference').value=newRedeemReference();if(workerSession)await findMember();else await refreshBalance(current.id);}};
 
 // V14: reports come exclusively from session-checked Supabase RPC.
 const reportLocalDay=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Beirut',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
