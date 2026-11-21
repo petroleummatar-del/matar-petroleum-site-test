@@ -253,7 +253,30 @@ const b=await client.from('matar_branches').select('id,code,name_ar');if(b.error
 $('branch').replaceChildren();for(const item of branches){const o=document.createElement('option');o.value=item.id;o.textContent=item.name_ar;$('branch').append(o);}syncReportBranches();if(staff.role==='cashier'&&staff.branch_id){$('branch').value=staff.branch_id;$('branch').disabled=true;}else $('branch').disabled=false;
 await loadRewardOptions(false);
 $('who').textContent=staff.display_name;$('role').textContent='الصلاحية: '+staff.role;$('app').classList.remove('hidden');show('status','متصل بقاعدة بيانات MATAR CLUB.',true);}
-$('loginBtn').onclick=async()=>{if(!client)return;busy('loginBtn',true);const {error}=await client.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});show('loginMsg',error?error.message:'تم تسجيل الدخول.',!error);busy('loginBtn',false);};
+$('loginBtn').onclick=async()=>{
+ if(!client)return;
+ busy('loginBtn',true);
+ show('loginMsg','جاري التحقق من حسابك…',true);
+ try{
+  const {data,error}=await client.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});
+  $('password').value='';
+  if(error){show('loginMsg','تعذّر تسجيل الدخول: '+error.message,false);return;}
+  // Only verified owners may enter MATAR CONTROL. Its server RPC enforces owner authorization.
+  const {error:ownerError}=await client.rpc('matar_owner_dashboard');
+  if(!ownerError){
+   show('loginMsg','تم الدخول. جاري فتح لوحة MATAR CONTROL…',true);
+   window.location.assign('../dashboard/');
+   return;
+  }
+  // Normal staff accounts stay in V16; never grant owner privileges via UI alone.
+  show('loginMsg','تم الدخول بحساب الموظف. جارٍ فتح واجهة العمل…',true);
+  if(data?.session)await loadSession(data.session);
+ }catch(e){
+  show('loginMsg','تعذّر إكمال تسجيل الدخول: '+(e?.message||String(e)),false);
+ }finally{
+  busy('loginBtn',false);
+ }
+};
 $('logout').onclick=async()=>{if(workerSession){const {error}=await client.rpc('matar_worker_logout',{p_session_token:workerSession.token});if(error){show('status','تعذّر إنهاء جلسة الموظف على الخادم: '+error.message,false);return;}workerSession=null;staff=null;current=null;clearBalance();$('app').classList.add('hidden');$('login').classList.remove('hidden');show('status','تم إلغاء جلسة العامل وتسجيل الخروج.',true);return;}await client.auth.signOut();};
 async function loadWorkerView(){
  if(!workerSession)return;
