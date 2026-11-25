@@ -1,0 +1,290 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MATAR CONTROL | Owner Dashboard | System Settings</title><style>:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0%,#36115e,#09162f 46%,#060d1c);color:#f7f8ff;font-family:system-ui,Tahoma,sans-serif;min-height:100vh}.wrap{max-width:1050px;margin:auto;padding:20px 15px 80px}header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}h1{margin:0;font-size:1.6rem;letter-spacing:.04em}h2{font-size:1.2rem;margin:0 0 18px}.sub{color:#b5c6e8;font-size:.9rem;margin-top:7px}.panel{background:linear-gradient(135deg,#122b55,#101a3b);border:1px solid #435b89;border-radius:22px;padding:22px;margin-bottom:17px;box-shadow:0 12px 36px #0003}.hidden{display:none!important}select{display:block;width:100%;padding:14px;border:1px solid #6476a0;border-radius:12px;background:#07152e;color:white;margin:8px 0 15px;font-size:1rem}input{display:block;width:100%;padding:15px;border:1px solid #6476a0;border-radius:12px;background:#07152e;color:white;font-size:1rem;margin:8px 0 15px;direction:ltr;text-align:left}button{border:1px solid #718ac2;border-radius:12px;padding:12px 18px;background:#273d6a;color:white;font-weight:700;font-size:.95rem;cursor:pointer}button.primary{background:linear-gradient(130deg,#cc2dff,#6813b5);border-color:#d98aff}button:disabled{opacity:.5}.actions{display:flex;flex-wrap:wrap;gap:10px}.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.metric{background:#091b3a;border:1px solid #415988;border-radius:17px;padding:16px;min-width:0}.metric small{color:#b8c8e5;display:block;font-size:.8rem}.metric strong{font-size:1.9rem;display:block;margin-top:8px;overflow-wrap:anywhere}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:550px}td,th{padding:12px 8px;text-align:right;border-bottom:1px solid #405477}th{color:#b8c8e5;font-size:.85rem}.notice{line-height:1.9;color:#d0d9f2}.error{color:#ffb4ba}.ok{color:#a3f3c5}.approval{border:1px solid #445a87;padding:15px;border-radius:15px;margin:10px 0;background:#0a1a39}.approval p{margin:6px 0;line-height:1.7}.approval .actions{margin-top:12px}@media(min-width:700px){.cards{grid-template-columns:repeat(4,minmax(0,1fr))}h1{font-size:2rem}}
+/* MATAR CONTROL · Owner System Settings */
+.settings-header{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.settings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin:16px 0}
+.settings-grid label{display:block;color:#cbdaf7;font-size:.92rem}
+.settings-grid input{margin:8px 0 5px}
+.settings-note{background:#0a2040;border:1px solid #5473a4;padding:12px 15px;border-radius:12px;line-height:1.8;color:#d9e8ff;margin:10px 0}
+.settings-warning{border-color:#b77d39;background:#392a21;color:#ffe4b5}
+.settings-good{border-color:#39896b;background:#0e312b;color:#caffec}
+.settings-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 15px}
+.settings-tabs button{font-size:.9rem;background:#132d56}
+.settings-tabs button.active{border-color:#d67bff;background:#5e2690;color:#fff}
+.settings-pane{padding:4px 0}
+.settings-pane h3{margin:12px 0 4px;font-size:1.1rem}
+.settings-action-line{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 0}
+.settings-help{color:#b5c6e8;font-size:.83rem;line-height:1.7}
+.settings-reward{background:#0a1d3f;border:1px solid #425c8d;border-radius:13px;padding:13px;margin:9px 0}
+.settings-reward .reward-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.settings-reward small{color:#b7c8e9;display:block;margin:5px 0}
+.settings-reward .inactive{color:#ffc6b4}
+#settingsToggle{white-space:nowrap}
+#workerManagement{background:none;border:0;padding:0;margin:12px 0;box-shadow:none}
+@media(max-width:580px){header{align-items:flex-start}header .header-tools{width:100%;justify-content:flex-start}}
+
+/* Mobile dashboard: tables remain readable with a visible horizontal scroll. */
+.tablewrap{max-width:100%;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;border-radius:12px}
+.tablewrap table{width:max-content;min-width:100%;table-layout:auto}
+.tablewrap th,.tablewrap td{white-space:nowrap;vertical-align:middle}
+.tablewrap:focus-visible{outline:2px solid #c49aff;outline-offset:2px}
+@media(max-width:580px){.wrap{padding:14px 12px 76px}.panel{padding:16px 14px;border-radius:19px}header{flex-wrap:wrap}header .header-tools{width:100%;justify-content:flex-start}.actions button{min-height:46px}.metric{padding:13px 10px}.metric strong{font-size:1.55rem}.approval{overflow-wrap:anywhere;word-break:break-word}.tablewrap{position:relative;margin-inline:-3px;padding-bottom:9px}.tablewrap:after{content:'← حرّك الجدول لعرض بقية الأعمدة';display:block;text-align:center;color:#b9c8ec;font-size:12px;padding-top:9px}}
+</style></head><body><noscript><p style="color:#fff;background:#742329;padding:18px;text-align:center">هيدا البرنامج بحاجة JavaScript. افتح ملف HTML من Downloads باستخدام Google Chrome، مش من معاينة الملفات.</p></noscript><main class="wrap"><header><div><h1>MATAR <span style="color:#d67bff">CONTROL</span> 👑</h1><div class="sub">لوحة إدارة مستقلة · MATAR CLUB · المحطتان</div></div><div class="actions header-tools"><button id="settingsToggle" class="hidden" type="button" aria-expanded="false" aria-controls="systemSettingsPanel">⚙️ إعدادات النظام</button><button id="logout" class="hidden">تسجيل خروج</button></div></header><section id="loginPanel" class="panel"><h2>دخول المالك</h2><p class="notice">سجّل دخولك بحساب MATAR Owner الخاص بـ MATAR CLUB. افتح الملف بعد تنزيله باستخدام Chrome، مع اتصال إنترنت.</p><form id="loginForm"><label>البريد الإلكتروني<input id="email" type="email" autocomplete="username" required value="petroleum.matar@gmail.com"></label><label>كلمة المرور<input id="password" type="password" autocomplete="current-password" required></label><button class="primary" type="submit">دخول إلى لوحة الإدارة</button></form><p id="loginStatus" class="notice"></p></section><div id="dashboard" class="hidden"><section class="panel"><h2>ملخص الأعمال</h2><div class="actions"><button class="primary" id="refresh">↻ تحديث الأرقام</button><button id="export">تصدير CSV</button></div><p id="status" class="notice">بانتظار البيانات…</p><div id="cards" class="cards"></div></section><section class="panel"><h2>مقارنة المحطتين</h2><div id="branches" class="tablewrap"></div></section>
+<section class="panel hidden" id="systemSettingsPanel" aria-label="إعدادات النظام">
+ <div class="settings-header"><div><h2>⚙️ إعدادات النظام</h2><p class="sub">إدارة النقاط والموافقات والمكافآت والعمال · خاص بحساب MATAR Owner</p></div><button id="settingsReload" type="button">↻ تحديث الإعدادات</button></div>
+ <p id="settingsGlobalStatus" class="settings-note" role="status">افتح القسم لتحميل الإعدادات من قاعدة البيانات.</p>
+ <div class="settings-tabs" role="tablist" aria-label="أقسام إعدادات النظام">
+  <button type="button" data-settings-tab="points" class="active" aria-selected="true">⛽ نقاط الخدمات</button>
+  <button type="button" data-settings-tab="approvals" aria-selected="false">🛡️ حدود الموافقات</button>
+  <button type="button" data-settings-tab="rewards" aria-selected="false">🎁 المكافآت والعروض</button>
+  <button type="button" data-settings-tab="workers" aria-selected="false">👷 العمال وPIN</button>
+ </div>
+ <div class="settings-pane" data-settings-pane="points">
+  <h3>معدّلات اكتساب النقاط</h3><p class="settings-help">قيم النقاط لكل ليتر وقيم النقاط لكل دولار خدمات. احتساب النقاط يدعم الكسور كما هي، مثلاً 35 ليتر بنزين = 17.5 نقطة عند معدل 0.5 نقطة لكل ليتر.</p>
+  <div class="settings-grid">
+   <label>نقطة لكل ليتر بنزين<input id="cfgGasRate" type="number" inputmode="decimal" min="0.001" max="100" step="0.001" value="0.5" disabled></label>
+   <label>نقطة لكل ليتر مازوت<input id="cfgDieselRate" type="number" inputmode="decimal" min="0.001" max="100" step="0.001" value="0.5" disabled></label>
+   <label>نقطة لكل دولار غسيل<input id="cfgWashRate" type="number" inputmode="decimal" min="0.001" max="100" step="0.001" value="2" disabled></label>
+   <label>نقطة لكل دولار تغيير زيت<input id="cfgOilRate" type="number" inputmode="decimal" min="0.001" max="100" step="0.001" value="2" disabled></label>
+  </div><div id="rateStatus" class="settings-note settings-warning">بانتظار فحص ربط حساب النقاط بقاعدة الإعدادات الجديدة.</div>
+  <button id="saveRateSettings" class="primary" disabled type="button">حفظ معدّلات النقاط</button>
+ </div>
+ <div class="settings-pane hidden" data-settings-pane="approvals">
+  <h3>الموافقات الاستثنائية</h3><p class="settings-help">التعبئة التي تتجاوز الحد، أو التعبئة التي ترفع عدد عمليات الزبون فوق المسموح يومياً، تحتاج موافقة المالك.</p>
+  <div class="settings-grid">
+   <label>حد البنزين من دون موافقة (ليتر)<input id="cfgGasLimit" type="number" min="1" max="100000" step="1" value="100" disabled></label>
+   <label>حد المازوت من دون موافقة (ليتر)<input id="cfgDieselLimit" type="number" min="1" max="100000" step="1" value="200" disabled></label>
+   <label>عدد التعبئات المسموحة للزبون يومياً<input id="cfgDailyLimit" type="number" min="1" max="20" step="1" value="2" disabled></label>
+  </div><div id="approvalSettingsStatus" class="settings-note settings-warning">بانتظار فحص ربط جميع مسارات التعبئة بسياسة الموافقات الجديدة.</div>
+  <button id="saveApprovalSettings" class="primary" disabled type="button">حفظ حدود الموافقات</button>
+ </div>
+ <div class="settings-pane hidden" data-settings-pane="rewards">
+  <h3>إدارة المكافآت</h3><p class="settings-help">الإضافة والتعديل والإيقاف تنفَّذ في قاعدة البيانات بعد تأكيدك. المكافآت الموجودة لا تُحذف من سجل استبدالات الزبائن.</p>
+  <div class="settings-action-line"><button id="rewardReload" type="button">↻ تحديث المكافآت</button><button id="rewardAdd" type="button" class="primary">+ مكافأة جديدة</button></div>
+  <p id="rewardStatus" class="notice" aria-live="polite">بانتظار تحميل المكافآت.</p><div id="settingsRewardRows"></div>
+  <div id="rewardEditor" class="approval hidden">
+   <h3 id="rewardEditorTitle">إضافة مكافأة</h3>
+   <form id="settingsRewardForm">
+    <div class="settings-grid"><label>رمز المكافأة (إنجليزي)<input id="rewardCode" pattern="[a-z][a-z0-9_]{1,39}" maxlength="40" placeholder="free_coffee" autocomplete="off" required></label>
+    <label>اسم المكافأة<input id="rewardName" minlength="2" maxlength="120" placeholder="غسيل خارجي مجاني" required style="direction:rtl;text-align:right"></label>
+    <label>كلفة المكافأة بالنقاط<input id="rewardCost" type="number" min="1" max="1000000" step="1" required></label>
+    <label>حالة المكافأة<select id="rewardActive"><option value="true">مفعّلة</option><option value="false">موقوفة</option></select></label></div>
+    <div class="actions"><button id="rewardSave" type="submit" class="primary">حفظ المكافأة</button><button id="rewardCancel" type="button">إلغاء</button></div>
+   </form>
+  </div>
+ </div>
+ <div class="settings-pane hidden" data-settings-pane="workers"><section class="panel" id="workerManagement"><h2>إدارة العمال — PIN</h2><p class="notice">للمالك فقط. إضافة عامل، تغيير المحطة، إعادة تعيين PIN، وإيقاف أو تفعيل العامل. عند تعديل العامل تُلغى جلسات دخوله السابقة.</p><div class="actions"><button id="workerRefresh">↻ تحديث العمال</button><button class="primary" id="workerAddToggle">+ إضافة عامل</button></div><p id="workerStatus" class="notice"></p><div id="workerEditor" class="hidden approval"><h3 id="workerEditorTitle">إضافة عامل</h3><form id="workerForm"><label>اسم العامل<input id="workerName" maxlength="120" required placeholder="الاسم الكامل"></label><label>المحطة<select id="workerBranch" required><option value="">اختار المحطة</option><option value="5bfce506-5ee3-4656-af6b-0ff8695e678c">المحطة الكبيرة</option><option value="3f1333b4-e147-4144-aff4-fe1122d6d4dc">المحطة الصغيرة</option></select></label><label>رقم PIN (6–8 أرقام)<input id="workerPin" type="password" inputmode="numeric" pattern="[0-9]{6,8}" autocomplete="new-password" placeholder="اتركه فارغاً عند التعديل للإبقاء عليه"></label><label id="workerActiveWrap" class="hidden">حالة العامل<select id="workerActive"><option value="true">نشط</option><option value="false">موقوف</option></select></label><div class="actions"><button class="primary" id="workerSave" type="submit">حفظ العامل</button><button type="button" id="workerCancel">إلغاء</button></div></form></div><div id="workerResults"></div></section></div>
+</section>
+<section class="panel"><h2>طلبات التعبئة المعلّقة</h2><p class="notice">الطلبات المعلّقة لا تضيف نقاطاً قبل موافقتك.</p><button id="refreshApprovals">↻ تحديث الطلبات</button><p id="approvalStatus" class="notice"></p><div id="approvals"></div></section><section class="panel"><h2>إدارة الزبائن والنقاط — ربط مصحّح</h2><p class="notice">للمالك فقط · التعديل والإلغاء فعليان ويُسجّلان مع السبب. يمكن للمالك إيقاف الحساب وإعادة تفعيله مع توثيق السبب. لا يوجد حذف نهائي.</p><div class="actions"><input id="memberSearch" placeholder="اسم الزبون أو رقم الهاتف" style="flex:1;min-width:190px"><button id="findMembers">بحث</button></div><p id="manageStatus" class="notice"></p><div id="memberResults"></div><div id="selectedMember" class="hidden"><h3 id="memberTitle"></h3><div class="actions"><button id="suspendMember">إيقاف / إعادة تفعيل الزبون</button><button id="adjustMember">إضافة أو خصم نقاط</button><button id="showMemberEvents">عرض عمليات الزبون</button></div></div></section><section class="panel"><h2>سجل العمليات</h2><div class="actions"><button id="allEvents">آخر العمليات</button><button id="auditRefresh">سجل تعديلات المالك</button></div><div id="eventResults" class="tablewrap"></div></section><section class="panel"><h2>سجل الرقابة</h2><div id="auditResults" class="tablewrap"></div></section><section class="panel"><h2>التشغيل التجريبي</h2><p class="notice">هذه اللوحة تقرأ بيانات Supabase الفعلية. استعمل زبائن تجريبيين عند فحص نظام النقاط، لأن أي عملية تتم من برنامج الموظفين تُسجَّل فعلياً. التصدير الحالي يلخّص المؤشرات والمحطتين، وليس سجل العمليات التفصيلي.</p></section></div></main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+/* Fall back to a second CDN if the first cannot be reached. */
+if (!window.supabase) {
+  document.write('<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"><\/script>');
+}
+</script><script>
+'use strict';
+const URL_SUPA='https://zvxotwnwdkywttdjojpx.supabase.co',KEY='sb_publishable__-ImiWyhptaElvhhvon7MQ_vffPtuFV';
+const $=id=>document.getElementById(id);let client,snapshot=null,owner=false;
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num=v=>Number(v||0).toLocaleString('en-US',{maximumFractionDigits:2});
+const metrics=[['الزبائن النشطون','active_members'],['زبائن جدد اليوم','new_members_today'],['عمليات الوقود اليوم','fuel_transactions_today'],['ليترات الوقود اليوم','fuel_liters_today'],['النقاط المكتسبة اليوم','points_earned_today'],['النقاط المكتسبة إجمالاً','points_earned_total'],['النقاط المستبدلة إجمالاً','points_redeemed_total'],['رصيد النقاط الإجمالي','points_balance_total'],['طلبات موافقة معلّقة','pending_approvals']];
+function view(yes){owner=yes;$('loginPanel').classList.toggle('hidden',yes);$('dashboard').classList.toggle('hidden',!yes);$('logout').classList.toggle('hidden',!yes);$('settingsToggle').classList.toggle('hidden',!yes);if(!yes){$('systemSettingsPanel').classList.add('hidden');$('settingsToggle').setAttribute('aria-expanded','false');$('settingsToggle').textContent='⚙️ إعدادات النظام';}}
+async function verify(){const {data:{session}}=await client.auth.getSession();if(!session){view(false);return}const {data,error}=await client.rpc('matar_owner_dashboard');if(error){view(false);$('loginStatus').textContent='تعذّر فتح لوحة المالك: '+error.message;return}view(true);render(data);await loadApprovals();await Promise.all([findMembers(),loadEvents(),loadAudit(),loadWorkers()])}
+function render(data){if(!data||!Array.isArray(data.branches)){throw Error('البيانات غير مكتملة')}snapshot=data;$('cards').innerHTML=metrics.map(([label,key])=>`<div class="metric"><small>${esc(label)}</small><strong>${num(data[key])}</strong></div>`).join('');$('branches').innerHTML='<table><thead><tr><th>المحطة</th><th>عمليات اليوم</th><th>ليترات الوقود اليوم</th><th>نقاط اليوم</th><th>النقاط الإجمالية</th></tr></thead><tbody>'+data.branches.map(b=>`<tr><td>${esc(b.name)}</td><td>${num(b.transactions_today)}</td><td>${num(b.fuel_liters_today)}</td><td>${num(b.points_today)}</td><td>${num(b.points_total)}</td></tr>`).join('')+'</tbody></table>';$('status').textContent='آخر تحديث: '+new Date().toLocaleString('ar-LB',{timeZone:'Asia/Beirut'})}
+async function refresh(){if(!owner)return;$('status').textContent='جاري تحديث البيانات…';const {data,error}=await client.rpc('matar_owner_dashboard');if(error){$('status').textContent='خطأ: '+error.message;return}try{render(data)}catch(e){$('status').textContent=e.message}}
+async function loadApprovals(){if(!owner)return;$('approvalStatus').textContent='جاري تحميل الطلبات…';const {data,error}=await client.rpc('matar_owner_pending_refuels');if(error){$('approvalStatus').textContent='خطأ: '+error.message;return}const rows=Array.isArray(data)?data:[];$('approvalStatus').textContent=rows.length?`عدد الطلبات: ${rows.length}`:'ما في طلبات معلّقة.';$('approvals').innerHTML=rows.map(r=>`<article class="approval"><strong>${esc(r.customer_name)} · ${esc(r.customer_phone)}</strong><p>${esc(r.service_code)} · ${num(r.quantity)} ليتر · ${esc(r.reference_code)}</p><p>سبب المراجعة: ${esc(r.reason)} · نقاط متوقعة: ${num(r.potential_points)}</p><p>رقم اللوحة: ${esc(r.license_plate||'—')}</p><div class="actions"><button class="primary" data-action="approve" data-id="${esc(r.approval_id)}">موافقة</button><button data-action="reject" data-id="${esc(r.approval_id)}">رفض</button></div></article>`).join('')}
+$('approvals').addEventListener('click',async e=>{const b=e.target.closest('button[data-action]');if(!b||!owner)return;const id=b.dataset.id,approve=b.dataset.action==='approve';if(!confirm(approve?'تأكيد الموافقة على التعبئة وإضافة نقاطها؟':'تأكيد رفض الطلب دون إضافة نقاط؟'))return;b.disabled=true;const {error}=await client.rpc(approve?'matar_owner_approve_refuel':'matar_owner_reject_refuel',{p_approval_id:id});if(error){alert('تعذّر تنفيذ الطلب: '+error.message);b.disabled=false;return}await Promise.all([refresh(),loadApprovals()])});
+
+let selected=null;let reversedIds=new Set();
+const showError=(id,error)=>{$(id).textContent='خطأ: '+(error?.message||String(error))};
+async function findMembers(){if(!owner)return;const {data,error}=await client.rpc('matar_owner_list_members',{p_search:$('memberSearch').value.trim(),p_limit:30});if(error)return showError('manageStatus',error);const rows=Array.isArray(data)?data:[];$('manageStatus').textContent=`${rows.length} زبون`; $('memberResults').innerHTML=rows.map(m=>`<article class="approval"><strong>${esc(m.full_name)}</strong> · ${esc(m.phone_e164)} · ${esc(m.status)} · ${num(m.points_balance)} نقطة <button data-member="${esc(m.member_id)}">اختيار</button></article>`).join('');window.ownerMemberRows=rows;}
+$('findMembers').onclick=findMembers;
+$('memberResults').onclick=e=>{const b=e.target.closest('[data-member]');if(!b)return;selected=(window.ownerMemberRows||[]).find(m=>m.member_id===b.dataset.member);if(!selected)return;$('selectedMember').classList.remove('hidden');$('memberTitle').textContent=`${selected.full_name} | ${selected.points_balance} نقطة | ${selected.status}`;};
+async function afterChange(){await Promise.all([findMembers(),loadEvents(selected?.member_id||null),loadAudit(),refresh()]);}
+$('suspendMember').onclick=async()=>{
+  if(!selected)return;
+  const next=selected.status==='active'?'suspended':'active';
+  const action=next==='suspended'?'إيقاف':'إعادة تفعيل';
+  const reason=prompt('سبب '+action+' حساب '+selected.full_name+' (5 أحرف على الأقل):');
+  if(reason===null)return;
+  if(reason.trim().length<5||reason.trim().length>500)return alert('السبب لازم يكون بين 5 و500 حرف');
+  if(!confirm('تأكيد '+action+' حساب '+selected.full_name+'؟ لن يتم حذف نقاطه أو عملياته.'))return;
+  const button=$('suspendMember');button.disabled=true;
+  try{
+    const {error}=await client.rpc('matar_owner_set_member_status',{
+      p_member_id:selected.member_id,p_status:next,p_reason:reason.trim()
+    });
+    if(error)throw error;
+    selected=null;$('selectedMember').classList.add('hidden');
+    await Promise.all([findMembers(),loadAudit(),refresh()]);
+    alert('تم '+action+' الحساب وتسجيل السبب بسجل الرقابة');
+  }catch(e){alert('تعذّر تغيير حالة الحساب: '+e.message)}
+  finally{button.disabled=false}
+};
+$('adjustMember').onclick=async()=>{if(!selected)return;const value=prompt('عدد النقاط: موجب للإضافة، وسالب للخصم');if(value===null)return;const n=Number(value);if(!Number.isInteger(n)||n===0||Math.abs(n)>100000)return alert('أدخل عدد نقاط صحيح غير صفر');const reason=prompt('سبب التعديل (5 أحرف على الأقل):');if(reason===null)return;if(reason.trim().length<5)return alert('السبب لازم يكون 5 أحرف على الأقل');const branch=prompt('رمز المحطة: 1 للكبيرة أو 2 للصغيرة','1');if(branch===null)return;const branchId=branch==='1'?'5bfce506-5ee3-4656-af6b-0ff8695e678c':branch==='2'?'3f1333b4-e147-4144-aff4-fe1122d6d4dc':null;if(!branchId)return alert('اختار 1 أو 2');if(!confirm(`تأكيد ${n>0?'إضافة':'خصم'} ${Math.abs(n)} نقطة من ${selected.full_name}؟`))return;const {error}=await client.rpc('matar_owner_adjust_points',{p_member_id:selected.member_id,p_branch_id:branchId,p_points:n,p_reason:reason.trim()});if(error)return alert('تعذّر التعديل: '+error.message);alert('تم تسجيل قيد النقاط');await afterChange();};
+$('showMemberEvents').onclick=()=>selected&&loadEvents(selected.member_id);$('allEvents').onclick=()=>loadEvents(null);
+async function loadEvents(memberId=null){if(!owner)return;const audit=await client.rpc('matar_owner_audit_history',{p_limit:500});if(!audit.error)reversedIds=new Set((audit.data||[]).filter(a=>a.action==='reverse_event').map(a=>a.original_event_id));const {data,error}=await client.rpc('matar_owner_list_events',{p_limit:500});if(error)return $('eventResults').textContent=error.message;const rows=(Array.isArray(data)?data:[]).filter(r=>!memberId||r.member_id===memberId);$('eventResults').innerHTML='<table><thead><tr><th>التاريخ</th><th>الزبون</th><th>المحطة</th><th>النوع</th><th>النقاط</th><th>المرجع</th><th>إجراء</th></tr></thead><tbody>'+rows.map(r=>`<tr><td>${esc(new Date(r.created_at).toLocaleString('ar-LB',{timeZone:'Asia/Beirut'}))}</td><td>${esc(r.customer_name)}</td><td>${esc(r.branch_name)}</td><td>${esc(r.kind)} ${esc(r.service_code||'')}</td><td>${num(r.points_delta)}</td><td>${esc(r.reference_code)}</td><td>${reversedIds.has(r.event_id)?'ملغاة':r.kind!=='earn'?'غير قابل للإلغاء':`<button data-cancel="${esc(r.event_id)}">إلغاء نقاط</button>`}</td></tr>`).join('')+'</tbody></table>';}
+$('eventResults').onclick=async e=>{const b=e.target.closest('[data-cancel]');if(!b)return;const id=b.dataset.cancel;const reason=prompt('سبب إلغاء نقاط العملية (5 أحرف على الأقل):');if(reason===null)return;if(reason.trim().length<5)return alert('السبب قصير');if(!confirm('سيُسجَّل قيد عكسي للنقاط، وليس إلغاء بيع المحروقات. هل تؤكد؟'))return;const {error}=await client.rpc('matar_owner_reverse_event',{p_event_id:id,p_reason:reason.trim()});if(error)return alert('تعذّر الإلغاء: '+error.message);alert('تم تسجيل قيد تصحيح');await afterChange();};
+async function loadAudit(){if(!owner)return;const {data,error}=await client.rpc('matar_owner_audit_history',{p_limit:50});if(error)return $('auditResults').textContent=error.message;const rows=Array.isArray(data)?data:[];$('auditResults').innerHTML='<table><thead><tr><th>التاريخ</th><th>الزبون (ID)</th><th>الإجراء</th><th>النقاط</th><th>السبب</th></tr></thead><tbody>'+rows.map(r=>`<tr><td>${esc(new Date(r.created_at).toLocaleString('ar-LB',{timeZone:'Asia/Beirut'}))}</td><td>${esc(r.member_id)}</td><td>${esc(r.action)}</td><td>${r.points_delta===null?'—':num(r.points_delta)}</td><td>${esc(r.reason)}</td></tr>`).join('')+'</tbody></table>';}
+
+let workerEditing=null,workerRows=[];
+function workerEditView(show){$('workerEditor').classList.toggle('hidden',!show)}
+function resetWorkerEditor(){workerEditing=null;$('workerForm').reset();$('workerPin').required=true;$('workerActiveWrap').classList.add('hidden');$('workerEditorTitle').textContent='إضافة عامل';workerEditView(true)}
+async function loadWorkers(){
+ if(!owner)return;
+ $('workerStatus').textContent='جاري تحميل العمال…';
+ const {data,error}=await client.rpc('matar_owner_list_workers');
+ if(error){showError('workerStatus',error);return}
+ workerRows=Array.isArray(data)?data:[];
+ $('workerStatus').textContent=workerRows.length?`${workerRows.length} عامل`:'لا يوجد عمال مسجّلون.';
+ $('workerResults').innerHTML=workerRows.map(w=>`<article class="approval"><strong>${esc(w.worker_name)}</strong><p>المحطة: ${esc(w.branch_name||'غير محددة')} · الحالة: ${w.active?'نشط':'موقوف'}</p><div class="actions"><button data-worker-edit="${esc(w.worker_id)}">تعديل / PIN / حالة</button></div></article>`).join('');
+}
+$('workerRefresh').onclick=loadWorkers;
+$('workerAddToggle').onclick=resetWorkerEditor;
+$('workerCancel').onclick=()=>workerEditView(false);
+$('workerResults').onclick=e=>{
+ const b=e.target.closest('[data-worker-edit]');if(!b)return;
+ const w=workerRows.find(x=>x.worker_id===b.dataset.workerEdit);if(!w)return;
+ workerEditing=w.worker_id;$('workerName').value=w.worker_name;$('workerBranch').value=w.branch_id||'';
+ $('workerPin').value='';$('workerPin').required=false;$('workerActive').value=String(w.active);
+ $('workerActiveWrap').classList.remove('hidden');$('workerEditorTitle').textContent='تعديل: '+w.worker_name;
+ workerEditView(true);$('workerEditor').scrollIntoView({behavior:'smooth',block:'nearest'});
+};
+$('workerForm').onsubmit=async e=>{
+ e.preventDefault();if(!owner)return;
+ const name=$('workerName').value.trim(),branch=$('workerBranch').value,pin=$('workerPin').value;
+ if(name.length<2||name.length>120)return alert('الاسم لازم يكون بين 2 و120 حرف');
+ if(!branch)return alert('اختار المحطة');
+ if((!workerEditing||pin.length>0)&&!/^[0-9]{6,8}$/.test(pin))return alert('PIN لازم يكون 6 إلى 8 أرقام');
+ const active=$('workerActive').value==='true';
+ if(!confirm(workerEditing?`تأكيد تعديل ${name}؟ رح يتم تسجيل خروج العامل من الجلسات الحالية.`:`تأكيد إضافة العامل ${name}؟`))return;
+ const btn=$('workerSave');btn.disabled=true;
+ try{
+  const fn=workerEditing?'matar_owner_update_worker':'matar_owner_create_worker';
+  const args=workerEditing?{p_worker_id:workerEditing,p_name:name,p_branch_id:branch,p_active:active,p_new_pin:pin||null}:{p_name:name,p_branch_id:branch,p_pin:pin};
+  const {error}=await client.rpc(fn,args);if(error)throw error;
+  workerEditView(false);$('workerPin').value='';await Promise.all([loadWorkers(),loadAudit()]);
+  alert('تم حفظ العامل وتسجيل العملية في سجل الرقابة');
+ }catch(err){alert('تعذّر حفظ العامل: '+(err.message||err))}finally{btn.disabled=false}
+};
+
+$('auditRefresh').onclick=loadAudit;
+$('loginForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  $('loginStatus').textContent='جاري تسجيل الدخول…';
+  if(!client){$('loginStatus').textContent='مكتبة الاتصال غير متاحة. افتح الملف باستخدام Chrome واتصل بالإنترنت.';return;}
+  try{
+    const {error}=await client.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});
+    if(error){$('loginStatus').textContent=error.message;return;}
+    await verify();
+  }catch(err){$('loginStatus').textContent='تعذّر الاتصال: '+(err?.message||String(err));}
+});
+$('logout').onclick=async()=>{await client.auth.signOut();snapshot=null;view(false)};$('refresh').onclick=async()=>{await Promise.all([refresh(),loadApprovals()])};$('refreshApprovals').onclick=loadApprovals;
+$('export').onclick=()=>{if(!owner||!snapshot)return;const lines=[['metric','value'],...metrics.map(([label,key])=>[label,snapshot[key]]),[],['branch','transactions_today','fuel_liters_today','points_today','points_total'],...snapshot.branches.map(b=>[b.name,b.transactions_today,b.fuel_liters_today,b.points_today,b.points_total])];const csv='\ufeff'+lines.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');const u=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=u;a.download='MATAR_CONTROL_'+new Date().toISOString().slice(0,10)+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)};
+async function startMatarControl(){
+  try {
+    if(!window.supabase){
+      $('loginStatus').textContent='تعذّر تحميل مكتبة الاتصال. افتح ملف HTML الذي نزّلته في Chrome مع اتصال إنترنت، أو جرّب شبكة أخرى.';
+      return;
+    }
+    try {
+      client=window.supabase.createClient(URL_SUPA,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
+    } catch(storageError){
+      // Some local-file viewers block browser storage. Allow sign-in without persistence.
+      client=window.supabase.createClient(URL_SUPA,KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
+      $('loginStatus').textContent='تم فتح وضع التصفح المحلي: قد يلزم تسجيل الدخول مجدداً عند إغلاق الصفحة.';
+    }
+    await verify();
+  } catch(e) {
+    $('loginStatus').textContent='لم يكتمل تشغيل البرنامج: '+(e?.message||String(e));
+  }
+}
+startMatarControl();
+
+/* System settings module: all writes go through owner-only Supabase RPCs. */
+let settingsSnapshot=null;
+let settingsRewards=[];
+let rewardEditingId=null;
+let settingsIsLoaded=false;
+const configIds={gasoline_rate:'cfgGasRate',diesel_rate:'cfgDieselRate',carwash_rate:'cfgWashRate',oil_change_rate:'cfgOilRate',gasoline_limit:'cfgGasLimit',diesel_limit:'cfgDieselLimit',daily_refuels:'cfgDailyLimit'};
+function settingsNotice(id,message,kind){const el=$(id);el.textContent=message;el.className='settings-note '+(kind==='good'?'settings-good':'settings-warning');}
+function settingsTab(name){
+ document.querySelectorAll('[data-settings-tab]').forEach(b=>{const chosen=b.dataset.settingsTab===name;b.classList.toggle('active',chosen);b.setAttribute('aria-selected',String(chosen));});
+ document.querySelectorAll('[data-settings-pane]').forEach(p=>p.classList.toggle('hidden',p.dataset.settingsPane!==name));
+}
+document.querySelectorAll('[data-settings-tab]').forEach(b=>b.onclick=()=>settingsTab(b.dataset.settingsTab));
+$('settingsToggle').onclick=async()=>{
+ if(!owner)return;
+ const panel=$('systemSettingsPanel'),show=panel.classList.contains('hidden');
+ panel.classList.toggle('hidden',!show);$('settingsToggle').setAttribute('aria-expanded',String(show));
+ $('settingsToggle').textContent=show?'✕ إغلاق الإعدادات':'⚙️ إعدادات النظام';
+ if(show){panel.scrollIntoView({behavior:'smooth',block:'start'});if(!settingsIsLoaded)await loadSystemSettings();}
+};
+$('settingsReload').onclick=()=>loadSystemSettings();
+function configValues(){const v={};for(const [key,id] of Object.entries(configIds))v[key]=Number($(id).value);return v;}
+function showConfig(data){
+ for(const [key,id] of Object.entries(configIds))if(data[key]!==undefined && data[key]!==null)$(id).value=String(data[key]);
+ const engine=data.engine||{};
+ const ratesReady=engine.rates_live===true,approvalReady=engine.approvals_live===true;
+ for(const key of ['gasoline_rate','diesel_rate','carwash_rate','oil_change_rate'])$(configIds[key]).disabled=!ratesReady;
+ for(const key of ['gasoline_limit','diesel_limit','daily_refuels'])$(configIds[key]).disabled=!approvalReady;
+ $('saveRateSettings').disabled=!ratesReady;$('saveApprovalSettings').disabled=!approvalReady;
+ settingsNotice('rateStatus',ratesReady?'احتساب النقاط مربوط بإعدادات Supabase. التغييرات الجديدة تؤثر على العمليات التالية فقط.':'الحفظ مقفل للحماية: يجب أولاً ربط دالة حساب النقاط الفعلية بجدول الإعدادات. القيم المعروضة إعدادات أولية وليست دليلاً أن كل العمليات تتبعها.',ratesReady?'good':'warning');
+ settingsNotice('approvalSettingsStatus',approvalReady?'الموافقات مربوطة بجميع مسارات التعبئة الرئيسية. التغييرات الجديدة تؤثر على التعبئات التالية فقط.':'الحفظ مقفل للحماية: يلزم تحديث دوال التعبئة وقواعد الحماية قبل تغيير الحدود، حتى لا تختلف تصرفات العامل والموظف.',approvalReady?'good':'warning');
+}
+async function loadSystemSettings(){
+ if(!owner)return;
+ $('settingsGlobalStatus').textContent='جاري تحميل إعدادات النظام…';
+ settingsSnapshot=null;settingsIsLoaded=false;
+ Object.values(configIds).forEach(id=>$(id).disabled=true);
+ $('saveRateSettings').disabled=true;$('saveApprovalSettings').disabled=true;
+ const [result,rewards]=await Promise.all([
+  client.rpc('matar_owner_get_system_settings'),
+  client.rpc('matar_owner_list_rewards')
+ ]);
+ if(result.error){settingsNotice('settingsGlobalStatus','إعدادات النظام لم تُفعّل بعد في Supabase. نفّذ ملف MATAR_CONTROL_SETTINGS_SETUP.sql أولاً. التفاصيل: '+result.error.message,'warning');}
+ else if(result.data && typeof result.data==='object'){
+  settingsSnapshot=result.data;showConfig(result.data);settingsIsLoaded=true;
+  settingsNotice('settingsGlobalStatus','تم تحميل إعدادات النظام من Supabase. رقم النسخة: '+String(result.data.version||'—')+'. إعدادات القواعد التشغيلية لا تُفتح إلا بعد اكتمال ربطها.', 'good');
+ }else{settingsNotice('settingsGlobalStatus','تعذّر قراءة الإعدادات، تأكّد من صلاحية الحساب.','warning');}
+ if(rewards.error){settingsRewards=[];renderSettingsRewards();$('rewardStatus').textContent='المكافآت تحتاج تفعيل دوال الإعدادات في Supabase: '+rewards.error.message;}
+ else{settingsRewards=Array.isArray(rewards.data)?rewards.data:[];renderSettingsRewards();}
+}
+function renderSettingsRewards(){
+ $('rewardStatus').textContent=settingsRewards.length?`عدد المكافآت: ${settingsRewards.length}`:'لا توجد مكافآت أو لم تُحمّل البيانات بعد.';
+ $('settingsRewardRows').innerHTML=settingsRewards.map(r=>`<article class="settings-reward"><div class="reward-head"><div><strong>${esc(r.name_ar)}</strong><small>الرمز: ${esc(r.code)} · ${num(r.points_cost)} نقطة · <span class="${r.active?'':'inactive'}">${r.active?'مفعّلة':'موقوفة'}</span></small></div><button type="button" data-settings-reward-edit="${esc(r.id)}">تعديل</button></div></article>`).join('');
+}
+$('settingsRewardRows').onclick=e=>{const b=e.target.closest('[data-settings-reward-edit]');if(!b||!owner)return;const r=settingsRewards.find(x=>x.id===b.dataset.settingsRewardEdit);if(!r)return;
+ rewardEditingId=r.id;$('rewardEditorTitle').textContent='تعديل: '+r.name_ar;$('rewardCode').value=r.code;$('rewardCode').disabled=true;$('rewardName').value=r.name_ar;$('rewardCost').value=r.points_cost;$('rewardActive').value=String(r.active);$('rewardEditor').classList.remove('hidden');$('rewardEditor').scrollIntoView({behavior:'smooth',block:'nearest'});
+};
+$('rewardAdd').onclick=()=>{if(!owner)return;rewardEditingId=null;$('settingsRewardForm').reset();$('rewardCode').disabled=false;$('rewardEditorTitle').textContent='إضافة مكافأة';$('rewardActive').value='true';$('rewardEditor').classList.remove('hidden');$('rewardEditor').scrollIntoView({behavior:'smooth',block:'nearest'});};
+$('rewardCancel').onclick=()=>{$('rewardEditor').classList.add('hidden');rewardEditingId=null;};
+$('rewardReload').onclick=async()=>{const {data,error}=await client.rpc('matar_owner_list_rewards');if(error){$('rewardStatus').textContent='تعذّر التحديث: '+error.message;return;}settingsRewards=Array.isArray(data)?data:[];renderSettingsRewards();};
+$('settingsRewardForm').onsubmit=async e=>{
+ e.preventDefault();if(!owner)return;
+ const code=$('rewardCode').value.trim(),name=$('rewardName').value.trim(),points=Number($('rewardCost').value),active=$('rewardActive').value==='true';
+ if(!/^[a-z][a-z0-9_]{1,39}$/.test(code)||name.length<2||name.length>120||!Number.isSafeInteger(points)||points<1||points>1000000){alert('راجع رمز المكافأة والاسم وعدد النقاط.');return;}
+ if(!confirm(`تأكيد ${rewardEditingId?'تعديل':'إضافة'} المكافأة «${name}» بكلفة ${points} نقطة؟`))return;
+ const btn=$('rewardSave');btn.disabled=true;
+ try{
+  const {error}=await client.rpc('matar_owner_upsert_reward',{p_reward_id:rewardEditingId,p_code:code,p_name_ar:name,p_points_cost:points,p_active:active});
+  if(error)throw error;
+  $('rewardEditor').classList.add('hidden');rewardEditingId=null;await $('rewardReload').onclick();alert('تم حفظ المكافأة في قاعدة البيانات.');
+ }catch(err){alert('تعذّر الحفظ: '+(err.message||String(err)))}finally{btn.disabled=false;}
+};
+async function saveConfig(scope){
+ if(!owner||!settingsSnapshot)return;
+ const rates=['gasoline_rate','diesel_rate','carwash_rate','oil_change_rate'],approvals=['gasoline_limit','diesel_limit','daily_refuels'];
+ const keys=scope==='rates'?rates:approvals;
+ const values={};for(const k of [...rates,...approvals])values[k]=Number(settingsSnapshot[k]);
+ for(const k of keys){const n=Number($(configIds[k]).value);if(!Number.isFinite(n)||n<=0||n>100000||(k==='daily_refuels'&&!Number.isInteger(n))||(rates.includes(k)&&n>100)||(k==='daily_refuels'&&n>20))return alert('راجع قيمة '+k);values[k]=n;}
+ if(!confirm('تأكيد حفظ الإعدادات الجديدة؟ ستُطبق على العمليات الجديدة فقط.'))return;
+ const button=$(scope==='rates'?'saveRateSettings':'saveApprovalSettings');button.disabled=true;
+ try{
+  const {data,error}=await client.rpc('matar_owner_save_system_settings',{p_settings:values,p_expected_version:Number(settingsSnapshot.version),p_scope:scope});
+  if(error)throw error;settingsSnapshot=data;showConfig(data);settingsNotice('settingsGlobalStatus','تم حفظ إعدادات النظام بنجاح. رقم النسخة '+String(data.version)+'.','good');
+ }catch(err){alert('تعذّر حفظ الإعدادات: '+(err.message||String(err))+' — حدّث الإعدادات وحاول مجدداً.');await loadSystemSettings();}
+ finally{button.disabled=false;if(settingsSnapshot)showConfig(settingsSnapshot);}
+}
+$('saveRateSettings').onclick=()=>saveConfig('rates');
+$('saveApprovalSettings').onclick=()=>saveConfig('approvals');
+</script></body></html>
