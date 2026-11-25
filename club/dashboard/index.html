@@ -43,6 +43,21 @@
 .mcp-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:12px 0}
 .mcp-summary article{border:1px solid #56699a;background:#1b2c53;border-radius:12px;padding:12px}
 .mcp-summary strong{display:block;font-size:1.3rem;color:#f1c3ff}
+ 
+/* Responsive cards for MATAR CONTROL loyalty reports */
+.mcp-cards{display:none}
+@media(max-width:760px){
+ .mcp-report-table{overflow:visible}
+ .mcp-report-table .mcp-desktop{display:none}
+ .mcp-report-table .mcp-cards{display:grid;gap:12px}
+ .mcp-card{background:#203458;border:1px solid #536d9e;border-radius:14px;padding:12px;min-width:0}
+ .mcp-pair{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #425479;min-width:0}
+ .mcp-pair:last-child{border-bottom:0}
+ .mcp-pair strong{color:#b9cafd;font-size:.86rem;flex:0 0 30%}
+ .mcp-pair span{flex:1;min-width:0;overflow-wrap:anywhere;word-break:break-word;text-align:start;font-size:.91rem}
+ .mcp-summary{grid-template-columns:1fr}
+}
+@media print{.mcp-report-table .mcp-cards{display:none !important}.mcp-report-table .mcp-desktop{display:block !important}}
 </style></head><body><noscript><p style="color:#fff;background:#742329;padding:18px;text-align:center">هيدا البرنامج بحاجة JavaScript. افتح ملف HTML من Downloads باستخدام Google Chrome، مش من معاينة الملفات.</p></noscript><main class="wrap"><header><div><h1>MATAR <span style="color:#d67bff">CONTROL</span> 👑</h1><div class="sub">لوحة إدارة مستقلة · MATAR CLUB · المحطتان</div></div><div class="actions header-tools"><button id="settingsToggle" class="hidden" type="button" aria-expanded="false" aria-controls="systemSettingsPanel">⚙️ إعدادات النظام</button><button id="logout" class="hidden">تسجيل خروج</button></div></header><section id="loginPanel" class="panel"><h2>دخول المالك</h2><p class="notice">سجّل دخولك بحساب MATAR Owner الخاص بـ MATAR CLUB. افتح الملف بعد تنزيله باستخدام Chrome، مع اتصال إنترنت.</p><form id="loginForm"><label>البريد الإلكتروني<input id="email" type="email" autocomplete="username" required value="petroleum.matar@gmail.com"></label><label>كلمة المرور<input id="password" type="password" autocomplete="current-password" required></label><button class="primary" type="submit">دخول إلى لوحة الإدارة</button></form><p id="loginStatus" class="notice"></p></section><div id="dashboard" class="hidden"><section class="panel"><h2>ملخص الأعمال</h2><div class="actions"><button class="primary" id="refresh">↻ تحديث الأرقام</button><button id="export">تصدير CSV</button></div><p id="status" class="notice">بانتظار البيانات…</p><div id="cards" class="cards"></div></section><section class="panel"><h2>مقارنة المحطتين</h2><div id="branches" class="tablewrap"></div></section>
 <section class="panel hidden" id="systemSettingsPanel" aria-label="إعدادات النظام">
  <div class="settings-header"><div><h2>⚙️ إعدادات النظام</h2><p class="sub">إدارة النقاط والموافقات والمكافآت والعمال · خاص بحساب MATAR Owner</p></div><button id="settingsReload" type="button">↻ تحديث الإعدادات</button></div>
@@ -371,8 +386,12 @@ let mcpLastReport=null;
 const mcpEsc=(v)=>esc(String(v??''));
 function mcpTable(cols,rows){
  if(!rows.length)return '<p class="notice">لا توجد بيانات للفترة المختارة.</p>';
- return '<table><thead><tr>'+cols.map(c=>'<th>'+mcpEsc(c[0])+'</th>').join('')+'</tr></thead><tbody>'+
- rows.map(row=>'<tr>'+cols.map(c=>'<td>'+mcpEsc(c[1](row))+'</td>').join('')+'</tr>').join('')+'</tbody></table>';
+ const labels=cols.map(c=>mcpEsc(c[0]));
+ const values=rows.map(row=>cols.map(c=>mcpEsc(c[1](row))));
+ const table='<div class="mcp-desktop"><table><thead><tr>'+labels.map(v=>'<th>'+v+'</th>').join('')+'</tr></thead><tbody>'+
+ values.map(cells=>'<tr>'+cells.map(value=>'<td>'+value+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
+ const cards='<div class="mcp-cards">'+values.map(cells=>'<article class="mcp-card">'+cells.map((value,i)=>'<div class="mcp-pair"><strong>'+labels[i]+'</strong><span>'+value+'</span></div>').join('')+'</article>').join('')+'</div>';
+ return table+cards;
 }
 const mcpDayNow=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Beirut',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
 $('mcpDateFrom').value=mcpDayNow();$('mcpDateTo').value=mcpDayNow();
@@ -384,8 +403,11 @@ function mcpRenderReport(payload){
  const cards=list.map(r=>'<article><div>'+mcpEsc(r.branch_name)+'</div><strong>'+format(r.net_point_change)+' نقطة</strong><div class="mcp-small">بنزين '+format(r.gasoline_liters)+' لتر · مازوت '+format(r.diesel_liters)+' لتر</div><div class="mcp-small">تعبئات/خدمات '+format(r.earn_transactions)+' · مكافآت '+format(r.reward_redemptions)+' · تعديل '+format(r.adjustments)+'</div><div class="mcp-small">مكتسب '+format(r.earned_points)+' · مستبدل '+format(r.redeemed_points)+' · تعديل صافي '+format(r.adjustment_points)+'</div></article>').join('');
  $('mcpReportSummary').innerHTML='<div class="mcp-summary">'+cards+'</div>';
  const time=(v)=>new Date(v).toLocaleString('ar-LB',{timeZone:'Asia/Beirut'});
- $('mcpReportRows').innerHTML=mcpTable([['التاريخ',r=>time(r.created_at)],['الزبون',r=>r.customer_name],['المحطة',r=>r.branch_name],['النوع',r=>r.kind],['الخدمة',r=>r.reward_name||r.service_code||'—'],['الكمية',r=>r.quantity??'—'],['النقاط',r=>format(r.points_delta)],['المرجع',r=>r.reference_code]],events);
- $('mcpReportAudit').innerHTML=mcpTable([['التاريخ',r=>time(r.created_at)],['الزبون',r=>r.customer_name],['الإجراء',r=>r.action],['النقاط',r=>r.points_delta??'—'],['السبب',r=>r.reason||'—']],audit);
+ const kinds={earn:'اكتساب نقاط',redeem:'استبدال مكافأة',adjustment:'تعديل إداري',reverse:'قيد تصحيح'};
+ const services={gasoline:'بنزين',diesel:'مازوت',carwash:'غسيل سيارة',oil_change:'تغيير زيت'};
+ const actions={adjust_points:'تعديل النقاط',reverse_event:'تصحيح عملية',set_member_status:'تغيير حالة العضوية'};
+ $('mcpReportRows').innerHTML=mcpTable([['التاريخ',r=>time(r.created_at)],['الزبون',r=>r.customer_name],['المحطة',r=>r.branch_name],['النوع',r=>kinds[r.kind]||r.kind],['الخدمة',r=>r.reward_name||services[r.service_code]||r.service_code||'—'],['الكمية',r=>r.quantity??'—'],['النقاط',r=>format(r.points_delta)],['المرجع',r=>r.reference_code]],events);
+ $('mcpReportAudit').innerHTML=mcpTable([['التاريخ',r=>time(r.created_at)],['الزبون',r=>r.customer_name],['الإجراء',r=>actions[r.action]||r.action],['النقاط',r=>r.points_delta??'—'],['السبب',r=>r.reason||'—']],audit);
  const total=Number(payload.events_total||0);
  $('mcpReportStatus').textContent='تم التحميل: '+total+' عملية من '+payload.from+' إلى '+payload.to+(total>events.length?'؛ المعروض آخر '+events.length+' عملية فقط':'')+'. تعديلات المالك المعروضة: '+audit.length+'.';
  $('mcpReportCsv').disabled=!events.length;
