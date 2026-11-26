@@ -128,7 +128,7 @@
 <div id="mcpReportSummary"></div>
 <h3>العمليات حسب التاريخ والفرع</h3><div id="mcpReportRows" class="mcp-report-table"></div>
 <h3>تعديلات المالك والتدقيق</h3><div id="mcpReportAudit" class="mcp-report-table"></div>
-</section><section class="panel"><h2>سجل الرقابة — آخر التعديلات</h2><p class="notice">هذا السجل يعرض أحدث تعديلات المالك من جميع التواريخ، ولا يتغيّر بتصفية تقرير المحطتين أعلاه.</p><div id="auditResults" class="mcp-report-table"></div></section><section class="panel"><h2>التشغيل التجريبي</h2><p class="notice">هذه اللوحة تقرأ بيانات Supabase الفعلية. استعمل زبائن تجريبيين عند فحص نظام النقاط، لأن أي عملية تتم من برنامج الموظفين تُسجَّل فعلياً. التصدير الحالي يلخّص المؤشرات والمحطتين، وليس سجل العمليات التفصيلي.</p></section></div></main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</section><section class="panel"><h2>سجل الرقابة — آخر التعديلات</h2><p class="notice">سجل عام لجميع الفروع والتواريخ، منفصل عن فلتر تقرير المحطتين. يعرض اسم الزبون والفرع عند توفرهما. التعديلات لا تمس النقاط عند عرضها.</p><div id="auditResults" class="mcp-report-table"></div></section><section class="panel"><h2>التشغيل التجريبي</h2><p class="notice">هذه اللوحة تقرأ بيانات Supabase الفعلية. استعمل زبائن تجريبيين عند فحص نظام النقاط، لأن أي عملية تتم من برنامج الموظفين تُسجَّل فعلياً. التصدير الحالي يلخّص المؤشرات والمحطتين، وليس سجل العمليات التفصيلي.</p></section></div></main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 /* Fall back to a second CDN if the first cannot be reached. */
 if (!window.supabase) {
@@ -219,13 +219,14 @@ async function loadEvents(memberId=null){if(!owner)return;const audit=await clie
 $('eventResults').onclick=async e=>{const b=e.target.closest('[data-cancel]');if(!b)return;const id=b.dataset.cancel;const reason=prompt('سبب إلغاء نقاط العملية (5 أحرف على الأقل):');if(reason===null)return;if(reason.trim().length<5)return alert('السبب قصير');if(!confirm('سيُسجَّل قيد عكسي للنقاط، وليس إلغاء بيع المحروقات. هل تؤكد؟'))return;const {error}=await client.rpc('matar_owner_reverse_event',{p_event_id:id,p_reason:reason.trim()});if(error)return alert('تعذّر الإلغاء: '+error.message);alert('تم تسجيل قيد تصحيح');await afterChange();};
 async function loadAudit(){
  if(!owner)return;
- const {data,error}=await client.rpc('matar_owner_audit_history',{p_limit:50});
- if(error){$('auditResults').textContent=error.message;return;}
+ const {data,error}=await client.rpc('matar_owner_audit_detailed',{p_limit:50});
+ if(error){$('auditResults').textContent='تعذّر تحميل سجل الرقابة: '+error.message;return;}
  const rows=Array.isArray(data)?data:[];
- const names={adjust_points:'تعديل رصيد',reverse_event:'تصحيح عملية',set_member_status:'تغيير حالة العضوية'};
+ const names={adjust_points:'تعديل رصيد',reverse_event:'تصحيح عملية',set_member_status:'تغيير حالة العضوية',activate_member:'تفعيل عضوية',suspend_member:'إيقاف عضوية',update_worker:'تعديل بيانات عامل',create_worker:'إضافة عامل',reset_worker_pin:'تغيير رمز العامل'};
  $('auditResults').innerHTML=mcpTable([
  ['التاريخ',r=>new Date(r.created_at).toLocaleString('ar-LB',{timeZone:'Asia/Beirut'})],
- ['الزبون (رقم داخلي)',r=>r.member_id||'—'],
+ ['الزبون',r=>r.customer_name||'—'],
+ ['الفرع',r=>r.branch_name||'—'],
  ['الإجراء',r=>names[r.action]||r.action],
  ['النقاط',r=>r.points_delta===null?'—':num(r.points_delta)],
  ['السبب',r=>r.reason||'—']
