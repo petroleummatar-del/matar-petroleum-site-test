@@ -128,7 +128,7 @@
 <div id="mcpReportSummary"></div>
 <h3>العمليات حسب التاريخ والفرع</h3><div id="mcpReportRows" class="mcp-report-table"></div>
 <h3>تعديلات المالك والتدقيق</h3><div id="mcpReportAudit" class="mcp-report-table"></div>
-</section><section class="panel"><h2>سجل الرقابة</h2><div id="auditResults" class="tablewrap"></div></section><section class="panel"><h2>التشغيل التجريبي</h2><p class="notice">هذه اللوحة تقرأ بيانات Supabase الفعلية. استعمل زبائن تجريبيين عند فحص نظام النقاط، لأن أي عملية تتم من برنامج الموظفين تُسجَّل فعلياً. التصدير الحالي يلخّص المؤشرات والمحطتين، وليس سجل العمليات التفصيلي.</p></section></div></main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</section><section class="panel"><h2>سجل الرقابة — آخر التعديلات</h2><p class="notice">هذا السجل يعرض أحدث تعديلات المالك من جميع التواريخ، ولا يتغيّر بتصفية تقرير المحطتين أعلاه.</p><div id="auditResults" class="mcp-report-table"></div></section><section class="panel"><h2>التشغيل التجريبي</h2><p class="notice">هذه اللوحة تقرأ بيانات Supabase الفعلية. استعمل زبائن تجريبيين عند فحص نظام النقاط، لأن أي عملية تتم من برنامج الموظفين تُسجَّل فعلياً. التصدير الحالي يلخّص المؤشرات والمحطتين، وليس سجل العمليات التفصيلي.</p></section></div></main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 /* Fall back to a second CDN if the first cannot be reached. */
 if (!window.supabase) {
@@ -217,7 +217,20 @@ $('mcpAdjustForm').onsubmit=async(event)=>{
 $('showMemberEvents').onclick=()=>selected&&loadEvents(selected.member_id);$('allEvents').onclick=()=>loadEvents(null);
 async function loadEvents(memberId=null){if(!owner)return;const audit=await client.rpc('matar_owner_audit_history',{p_limit:500});if(!audit.error)reversedIds=new Set((audit.data||[]).filter(a=>a.action==='reverse_event').map(a=>a.original_event_id));const {data,error}=await client.rpc('matar_owner_list_events',{p_limit:500});if(error)return $('eventResults').textContent=error.message;const rows=(Array.isArray(data)?data:[]).filter(r=>!memberId||r.member_id===memberId);$('eventResults').innerHTML='<table><thead><tr><th>التاريخ</th><th>الزبون</th><th>المحطة</th><th>النوع</th><th>النقاط</th><th>المرجع</th><th>إجراء</th></tr></thead><tbody>'+rows.map(r=>`<tr><td>${esc(new Date(r.created_at).toLocaleString('ar-LB',{timeZone:'Asia/Beirut'}))}</td><td>${esc(r.customer_name)}</td><td>${esc(r.branch_name)}</td><td>${esc(r.kind)} ${esc(r.service_code||'')}</td><td>${num(r.points_delta)}</td><td>${esc(r.reference_code)}</td><td>${reversedIds.has(r.event_id)?'ملغاة':r.kind!=='earn'?'غير قابل للإلغاء':`<button data-cancel="${esc(r.event_id)}">إلغاء نقاط</button>`}</td></tr>`).join('')+'</tbody></table>';}
 $('eventResults').onclick=async e=>{const b=e.target.closest('[data-cancel]');if(!b)return;const id=b.dataset.cancel;const reason=prompt('سبب إلغاء نقاط العملية (5 أحرف على الأقل):');if(reason===null)return;if(reason.trim().length<5)return alert('السبب قصير');if(!confirm('سيُسجَّل قيد عكسي للنقاط، وليس إلغاء بيع المحروقات. هل تؤكد؟'))return;const {error}=await client.rpc('matar_owner_reverse_event',{p_event_id:id,p_reason:reason.trim()});if(error)return alert('تعذّر الإلغاء: '+error.message);alert('تم تسجيل قيد تصحيح');await afterChange();};
-async function loadAudit(){if(!owner)return;const {data,error}=await client.rpc('matar_owner_audit_history',{p_limit:50});if(error)return $('auditResults').textContent=error.message;const rows=Array.isArray(data)?data:[];$('auditResults').innerHTML='<table><thead><tr><th>التاريخ</th><th>الزبون (ID)</th><th>الإجراء</th><th>النقاط</th><th>السبب</th></tr></thead><tbody>'+rows.map(r=>`<tr><td>${esc(new Date(r.created_at).toLocaleString('ar-LB',{timeZone:'Asia/Beirut'}))}</td><td>${esc(r.member_id)}</td><td>${esc(r.action)}</td><td>${r.points_delta===null?'—':num(r.points_delta)}</td><td>${esc(r.reason)}</td></tr>`).join('')+'</tbody></table>';}
+async function loadAudit(){
+ if(!owner)return;
+ const {data,error}=await client.rpc('matar_owner_audit_history',{p_limit:50});
+ if(error){$('auditResults').textContent=error.message;return;}
+ const rows=Array.isArray(data)?data:[];
+ const names={adjust_points:'تعديل رصيد',reverse_event:'تصحيح عملية',set_member_status:'تغيير حالة العضوية'};
+ $('auditResults').innerHTML=mcpTable([
+ ['التاريخ',r=>new Date(r.created_at).toLocaleString('ar-LB',{timeZone:'Asia/Beirut'})],
+ ['الزبون (رقم داخلي)',r=>r.member_id||'—'],
+ ['الإجراء',r=>names[r.action]||r.action],
+ ['النقاط',r=>r.points_delta===null?'—':num(r.points_delta)],
+ ['السبب',r=>r.reason||'—']
+ ],rows);
+}
 
 let workerEditing=null,workerRows=[];
 function workerEditView(show){$('workerEditor').classList.toggle('hidden',!show)}
@@ -409,7 +422,11 @@ function mcpRenderReport(payload){
  $('mcpReportRows').innerHTML=mcpTable([['التاريخ',r=>time(r.created_at)],['الزبون',r=>r.customer_name],['المحطة',r=>r.branch_name],['النوع',r=>kinds[r.kind]||r.kind],['الخدمة',r=>r.reward_name||services[r.service_code]||r.service_code||'—'],['الكمية',r=>r.quantity??'—'],['النقاط',r=>format(r.points_delta)],['المرجع',r=>r.reference_code]],events);
  $('mcpReportAudit').innerHTML=mcpTable([['التاريخ',r=>time(r.created_at)],['الزبون',r=>r.customer_name],['الإجراء',r=>actions[r.action]||r.action],['النقاط',r=>r.points_delta??'—'],['السبب',r=>r.reason||'—']],audit);
  const total=Number(payload.events_total||0);
- $('mcpReportStatus').textContent='تم التحميل: '+total+' عملية من '+payload.from+' إلى '+payload.to+(total>events.length?'؛ المعروض آخر '+events.length+' عملية فقط':'')+'. تعديلات المالك المعروضة: '+audit.length+'.';
+ const previous=new Date(payload.from+'T12:00:00Z');previous.setUTCDate(previous.getUTCDate()-1);
+ const yesterday=previous.toISOString().slice(0,10);
+ $('mcpReportStatus').textContent=total===0
+ ?('لا توجد عمليات MATAR CLUB للفترة '+payload.from+' إلى '+payload.to+' في الفرع المحدد. جرّب يوم '+yesterday+' أو اختر فرعاً آخر.')
+ :('تم التحميل: '+total+' عملية من '+payload.from+' إلى '+payload.to+(total>events.length?'؛ المعروض آخر '+events.length+' عملية فقط':'')+'. تعديلات المالك المعروضة: '+audit.length+'.');
  $('mcpReportCsv').disabled=!events.length;
 }
 async function mcpLoadBranchReport(){
